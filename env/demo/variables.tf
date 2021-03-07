@@ -26,7 +26,7 @@ regional cluster with multiple masters spread across zones in that region.
 Node pools will also be created as regional or zonal, to match the cluster.
 If a node pool is zonal it will have the specified number of nodes in that
 zone. If a node pool is regional it will have the specified number of nodes
-in each zone within that region. For more information see: 
+in each zone within that region. For more information see:
 https://cloud.google.com/kubernetes-engine/docs/concepts/regional-clusters
 EOF
 }
@@ -191,9 +191,9 @@ variable "master_ipv4_cidr_block" {
   default = "172.16.0.0/28"
 
   description = <<EOF
-The IP range in CIDR notation to use for the hosted master network. This 
-range will be used for assigning internal IP addresses to the master or set 
-of masters, as well as the ILB VIP. This range must not overlap with any 
+The IP range in CIDR notation to use for the hosted master network. This
+range will be used for assigning internal IP addresses to the master or set
+of masters, as well as the ILB VIP. This range must not overlap with any
 other ranges in use within the cluster's network.
 EOF
 }
@@ -213,8 +213,8 @@ variable "http_load_balancing_disabled" {
   default = false
 
   description = <<EOF
-The status of the HTTP (L7) load balancing controller addon, which makes it 
-easy to set up HTTP load balancers for services in a cluster. It is enabled 
+The status of the HTTP (L7) load balancing controller addon, which makes it
+easy to set up HTTP load balancers for services in a cluster. It is enabled
 by default; set disabled = true to disable.
 EOF
 }

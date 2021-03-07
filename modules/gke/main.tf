@@ -222,10 +222,10 @@ resource "google_container_node_pool" "node_pool" {
     # The image rype of a Google Compute Engine.
     image_type = lookup(
       var.node_pools[count.index],
-       "image_type",
-        "COS_CONTAINERD"
+      "image_type",
+      "COS_CONTAINERD"
     )
-    
+
     # The name of a Google Compute Engine machine type. Defaults to
     # n1-standard-1.
     machine_type = lookup(

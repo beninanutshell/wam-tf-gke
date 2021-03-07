@@ -3,17 +3,14 @@
 | Name | Version |
 |------|---------|
 | terraform | ~> 0.12 |
-| google | ~> 3.5 |
-| google-beta | ~> 3.5 |
-| random | ~> 2.1 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| google | ~> 3.5 |
-| google-beta | ~> 3.5 |
-| random | ~> 2.1 |
+| google | n/a |
+| google-beta | n/a |
+| random | n/a |
 
 ## Modules
 

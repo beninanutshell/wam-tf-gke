@@ -1,5 +1,4 @@
 provider "random" {
-  version = "~> 2.1"
 }
 
 resource "random_id" "entropy" {

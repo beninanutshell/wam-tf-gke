@@ -7,3 +7,4 @@ verify-terraform/
 .gitsecret/keys/random_seed
 !*.secret
 env/bootstrap/terraform.tfvars
+.terraform.lock.hcl

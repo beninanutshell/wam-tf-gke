@@ -16,7 +16,7 @@ output "endpoint" {
 
 output "identity_namespace" {
   description = "Workload Identity namespace"
-  value       = length(local.cluster_workload_identity_config) > 0 ? local.cluster_workload_identity_config[0].identity_namespace : null
+  value       = "${var.gcp_project_id}.svc.id.goog"
   depends_on = [
     google_container_cluster.cluster
   ]

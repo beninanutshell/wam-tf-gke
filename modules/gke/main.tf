@@ -14,7 +14,6 @@ locals {
 
 # https://www.terraform.io/docs/providers/google/index.html
 provider "google" {
-  version = "~> 3.5"
   project = var.gcp_project_id
   region  = local.gcp_region
 }
@@ -24,7 +23,6 @@ provider "google" {
 # the provider set explicitly for clarity.
 # https://www.terraform.io/docs/providers/google/guides/provider_versions.html#using-the-google-beta-provider
 provider "google-beta" {
-  version = "~> 3.5"
   project = var.gcp_project_id
   region  = local.gcp_region
 }
@@ -79,7 +77,7 @@ resource "google_container_cluster" "cluster" {
 
     content {
       #identity_namespace = workload_identity_config.value
-      identity_namespace = "${var.project_id}.svc.id.goog"
+      identity_namespace = "${var.gcp_project_id}.svc.id.goog"
     }
   }
 
@@ -169,6 +167,12 @@ resource "google_container_cluster" "cluster" {
         display_name = cidr_blocks.value.display_name
       }
     }
+  }
+
+  node_config {
+
+    service_account = google_service_account.default.email
+
   }
 
   # The loggingservice that the cluster should write logs to. Using the

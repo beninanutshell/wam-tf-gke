@@ -6,9 +6,13 @@ terraform {
 # times within a module. They are used here to determine the GCP region from
 # the given location, which can be either a region or zone.
 locals {
-  gcp_location_parts = split("-", var.gcp_location)
-  gcp_region         = format("%s-%s", local.gcp_location_parts[0], local.gcp_location_parts[1])
-  cluster_endpoint   = google_container_cluster.cluster.endpoint
+  gcp_location_parts           = split("-", var.gcp_location)
+  gcp_region                   = format("%s-%s", local.gcp_location_parts[0], local.gcp_location_parts[1])
+  cluster_endpoint             = google_container_cluster.cluster.endpoint
+  release_channel              = var.release_channel == "" ? [] : [var.release_channel]
+  min_master_version           = var.release_channel == "" ? var.min_master_version : ""
+  identity_namespace           = var.identity_namespace == "" ? [] : [var.identity_namespace]
+  authenticator_security_group = var.authenticator_security_group == "" ? [] : [var.authenticator_security_group]
 
 }
 
@@ -35,14 +39,6 @@ provider "kubernetes" {
 }
 
 data "google_client_config" "default" {}
-
-
-locals {
-  release_channel              = var.release_channel == "" ? [] : [var.release_channel]
-  min_master_version           = var.release_channel == "" ? var.min_master_version : ""
-  identity_namespace           = var.identity_namespace == "" ? [] : [var.identity_namespace]
-  authenticator_security_group = var.authenticator_security_group == "" ? [] : [var.authenticator_security_group]
-}
 
 
 # https://www.terraform.io/docs/providers/google/r/container_cluster.html
@@ -204,7 +200,7 @@ resource "google_container_node_pool" "node_pool" {
 
   # The name of the node pool. Instance groups created will have the cluster
   # name prefixed automatically.
-  name = format("%s-pool", lookup(var.node_pools[count.index], "name", format("%03d", count.index + 1)))
+  name = format("%s-np", lookup(var.node_pools[count.index], "name", format("%03d", count.index + 1)))
 
   # The cluster to create the node pool for.
   cluster = google_container_cluster.cluster.name

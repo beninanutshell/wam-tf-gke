@@ -8,6 +8,8 @@ terraform {
 locals {
   gcp_location_parts = split("-", var.gcp_location)
   gcp_region         = format("%s-%s", local.gcp_location_parts[0], local.gcp_location_parts[1])
+  cluster_endpoint   = google_container_cluster.cluster.endpoint
+
 }
 
 # https://www.terraform.io/docs/providers/google/index.html
@@ -27,15 +29,23 @@ provider "google-beta" {
   region  = local.gcp_region
 }
 
-locals {
-  release_channel    = var.release_channel == "" ? [] : [var.release_channel]
-  min_master_version = var.release_channel == "" ? var.min_master_version : ""
-  identity_namespace = var.identity_namespace == "" ? [] : [var.identity_namespace]
+provider "kubernetes" {
+  load_config_file       = false
+  host                   = "https://${google_container_cluster.cluster.endpoint}"
+  token                  = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(module.gke.ca_certificate)
 }
 
+data "google_client_config" "default" {}
+
+
 locals {
+  release_channel              = var.release_channel == "" ? [] : [var.release_channel]
+  min_master_version           = var.release_channel == "" ? var.min_master_version : ""
+  identity_namespace           = var.identity_namespace == "" ? [] : [var.identity_namespace]
   authenticator_security_group = var.authenticator_security_group == "" ? [] : [var.authenticator_security_group]
 }
+
 
 # https://www.terraform.io/docs/providers/google/r/container_cluster.html
 resource "google_container_cluster" "cluster" {
@@ -68,7 +78,8 @@ resource "google_container_cluster" "cluster" {
     for_each = toset(local.identity_namespace)
 
     content {
-      identity_namespace = workload_identity_config.value
+      #identity_namespace = workload_identity_config.value
+      identity_namespace = "${var.project_id}.svc.id.goog"
     }
   }
 
@@ -142,7 +153,7 @@ resource "google_container_cluster" "cluster" {
   # It's not possible to create a cluster with no node pool defined, but we
   # want to only use separately managed node pools. So we create the smallest
   # possible default node pool and immediately delete it.
-  remove_default_node_pool = false
+  remove_default_node_pool = true
 
   # The number of nodes to create in this cluster (not including the Kubernetes master).
   initial_node_count = 1

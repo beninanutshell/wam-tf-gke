@@ -1,9 +1,9 @@
 .terraform
-terraform.tfvars
-terraform.tfstate
+#terraform.tfvars
 terraform.tfstate.backup
+terraform.tfstate
 key.json
 verify-terraform/
 .gitsecret/keys/random_seed
 !*.secret
-env/demo/terraform.tfvars
+env/bootstrap/terraform.tfvars

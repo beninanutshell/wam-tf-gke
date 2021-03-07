@@ -142,7 +142,7 @@ resource "google_container_cluster" "cluster" {
   # It's not possible to create a cluster with no node pool defined, but we
   # want to only use separately managed node pools. So we create the smallest
   # possible default node pool and immediately delete it.
-  remove_default_node_pool = true
+  remove_default_node_pool = false
 
   # The number of nodes to create in this cluster (not including the Kubernetes master).
   initial_node_count = 1

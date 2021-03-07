@@ -4,9 +4,9 @@ repos:
     hooks:
       - id: terraform_fmt
       - id: terraform_docs_replace
-      #- id: terraform_tflint
-      #- id: terraform_tfsec
-      #- id: checkov
+      - id: terraform_tflint
+        #- id: terraform_tfsec
+      - id: checkov
   - repo: git://github.com/pre-commit/pre-commit-hooks
     rev: v3.3.0
     hooks:

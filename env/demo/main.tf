@@ -1,5 +1,5 @@
 module "gke-cluster" {
-  source  = "./modules/gke"
+  source  = "../../modules/gke"
 
   gcp_project_id                      = var.gcp_project_id
   cluster_name                        = var.cluster_name

@@ -326,3 +326,13 @@ supported identity namespace is the project's default
 https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
 EOF
 }
+
+variable "enable_shielded_nodes" {
+  type = string
+
+  default = "true"
+
+  description = <<EOF
+(Optional) Enable Shielded Nodes features on all nodes in this cluster. Defaults to false.
+EOF
+}

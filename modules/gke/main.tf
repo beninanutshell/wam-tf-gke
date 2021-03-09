@@ -51,6 +51,8 @@ resource "google_container_cluster" "cluster" {
 
   min_master_version = local.min_master_version
 
+  enable_shielded_nodes = "true"
+
   dynamic "release_channel" {
     for_each = toset(local.release_channel)
 
@@ -225,7 +227,7 @@ resource "google_container_node_pool" "node_pool" {
     auto_repair = lookup(var.node_pools[count.index], "auto_repair", true)
 
     # Whether the nodes will be automatically upgraded.
-    auto_upgrade = lookup(var.node_pools[count.index], "version", "") == "" ? lookup(var.node_pools[count.index], "auto_upgrade", true) : false
+    auto_upgrade = lookup(var.node_pools[count.index], "version", "") == "" ? lookup(var.node_pools[count.index], "auto_upgrade", true) : true
   }
 
   # Parameters used in creating the cluster's nodes.
@@ -234,7 +236,7 @@ resource "google_container_node_pool" "node_pool" {
     image_type = lookup(
       var.node_pools[count.index],
       "image_type",
-      "COS_CONTAINERD"
+      "COS"
     )
 
     # The name of a Google Compute Engine machine type. Defaults to

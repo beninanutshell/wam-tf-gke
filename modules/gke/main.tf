@@ -16,16 +16,11 @@ locals {
 
 }
 
-# https://www.terraform.io/docs/providers/google/index.html
 provider "google" {
   project = var.gcp_project_id
   region  = local.gcp_region
 }
 
-# To make use of beta features the google-beta provider is also used. Only
-# resources that use beta features use the beta provider. All resources have
-# the provider set explicitly for clarity.
-# https://www.terraform.io/docs/providers/google/guides/provider_versions.html#using-the-google-beta-provider
 provider "google-beta" {
   project = var.gcp_project_id
   region  = local.gcp_region
@@ -95,7 +90,7 @@ resource "google_container_cluster" "cluster" {
 
   # Enable the PodSecurityPolicy admission controller for the cluster.
   pod_security_policy_config {
-    enabled = var.pod_security_policy_enabled
+    enabled = var.pod_security_policy_enabled #tfsec:ignore:GCP009
   }
 
   # Configuration options for the NetworkPolicy feature.

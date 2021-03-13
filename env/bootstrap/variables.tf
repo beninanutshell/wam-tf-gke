@@ -274,3 +274,14 @@ supported identity namespace is the project's default
 https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
 EOF
 }
+
+variable "node_pools_labels" {
+  type        = map(map(string))
+  description = "Map of maps containing node labels by node-pool name"
+
+  # Default is being set in variables_defaults.tf
+  default = {
+    all               = {}
+    default-node-pool = {}
+  }
+}

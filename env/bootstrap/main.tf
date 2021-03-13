@@ -10,4 +10,20 @@ module "gke-cluster" {
   vpc_subnetwork_name                 = var.vpc_subnetwork_name
   services_secondary_range_name       = var.services_secondary_range_name
   cluster_secondary_range_name        = var.cluster_secondary_range_name
+
+  node_pools_labels = {
+    all = {}
+
+    default-node-pool = {
+      default-node-pool = true
+    }
+    wam-std-001 = {
+      env = labo,
+      os  = cos
+    }
+    wam-std-002 = {
+      env = labo,
+      os  = cos
+    }
+  }
 }

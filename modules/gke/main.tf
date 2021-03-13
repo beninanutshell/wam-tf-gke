@@ -278,6 +278,13 @@ resource "google_container_node_pool" "node_pool" {
       "https://www.googleapis.com/auth/cloud-platform",
     ]
 
+    labels = merge(
+      lookup(lookup(local.node_pools_labels, "default_values", {}), "cluster_name", true) ? { "cluster_name" = var.name } : {},
+      lookup(lookup(local.node_pools_labels, "default_values", {}), "node_pool", true) ? { "node_pool" = each.value["name"] } : {},
+      local.node_pools_labels["all"],
+      local.node_pools_labels[each.value["name"]],
+    )
+
     # The metadata key/value pairs assigned to instances in the cluster.
     metadata = {
       # https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata

@@ -40,7 +40,7 @@ format HH:MM, where HH : [00-23] and MM : [00-59] GMT.
 EOF
 }
 
-variable "node_pools" {
+variable "node_pools_std" {
   type = list(map(string))
 
   description = <<EOF
@@ -273,15 +273,4 @@ supported identity namespace is the project's default
 '[project_id].svc.id.goog'.
 https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
 EOF
-}
-
-variable "node_pools_labels" {
-  type        = map(map(string))
-  description = "Map of maps containing node labels by node-pool name"
-
-  # Default is being set in variables_defaults.tf
-  default = {
-    all               = {}
-    default-node-pool = {}
-  }
 }

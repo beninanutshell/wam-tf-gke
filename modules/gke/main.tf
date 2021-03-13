@@ -187,49 +187,49 @@ resource "google_container_cluster" "cluster" {
 }
 
 # https://www.terraform.io/docs/providers/google/r/container_node_pool.html
-resource "google_container_node_pool" "node_pool" {
+resource "google_container_node_pool" "node_pool_std" {
   provider = google
 
   # The location (region or zone) in which the cluster resides
   location = google_container_cluster.cluster.location
 
-  count = length(var.node_pools)
+  count = length(var.node_pools_std)
 
   # The name of the node pool. Instance groups created will have the cluster
   # name prefixed automatically.
-  name = format("%s-np", lookup(var.node_pools[count.index], "name", format("%03d", count.index + 1)))
+  name = format("%s-np", lookup(var.node_pools_std[count.index], "name", format("%03d", count.index + 1)))
 
   # The cluster to create the node pool for.
   cluster = google_container_cluster.cluster.name
 
-  initial_node_count = lookup(var.node_pools[count.index], "initial_node_count", 1)
+  initial_node_count = lookup(var.node_pools_std[count.index], "initial_node_count", 1)
 
   # Configuration required by cluster autoscaler to adjust the size of the node pool to the current cluster usage.
   autoscaling {
     # Minimum number of nodes in the NodePool. Must be >=0 and <= max_node_count.
-    min_node_count = lookup(var.node_pools[count.index], "autoscaling_min_node_count", 2)
+    min_node_count = lookup(var.node_pools_std[count.index], "autoscaling_min_node_count", 2)
 
     # Maximum number of nodes in the NodePool. Must be >= min_node_count.
-    max_node_count = lookup(var.node_pools[count.index], "autoscaling_max_node_count", 3)
+    max_node_count = lookup(var.node_pools_std[count.index], "autoscaling_max_node_count", 3)
   }
 
   # Target a specific Kubernetes version.
-  version = lookup(var.node_pools[count.index], "version", "")
+  version = lookup(var.node_pools_std[count.index], "version", "")
 
   # Node management configuration, wherein auto-repair and auto-upgrade is configured.
   management {
     # Whether the nodes will be automatically repaired.
-    auto_repair = lookup(var.node_pools[count.index], "auto_repair", true)
+    auto_repair = lookup(var.node_pools_std[count.index], "auto_repair", true)
 
     # Whether the nodes will be automatically upgraded.
-    auto_upgrade = lookup(var.node_pools[count.index], "version", "") == "" ? lookup(var.node_pools[count.index], "auto_upgrade", true) : true
+    auto_upgrade = lookup(var.node_pools_std[count.index], "version", "") == "" ? lookup(var.node_pools_std[count.index], "auto_upgrade", true) : true
   }
 
   # Parameters used in creating the cluster's nodes.
   node_config {
     # The image rype of a Google Compute Engine.
     image_type = lookup(
-      var.node_pools[count.index],
+      var.node_pools_std[count.index],
       "image_type",
       "COS"
     )
@@ -237,7 +237,7 @@ resource "google_container_node_pool" "node_pool" {
     # The name of a Google Compute Engine machine type. Defaults to
     # n1-standard-1.
     machine_type = lookup(
-      var.node_pools[count.index],
+      var.node_pools_std[count.index],
       "node_config_machine_type",
       "n1-standard-1",
     )
@@ -247,7 +247,7 @@ resource "google_container_node_pool" "node_pool" {
     # Size of the disk attached to each node, specified in GB. The smallest
     # allowed disk size is 10GB. Defaults to 100GB.
     disk_size_gb = lookup(
-      var.node_pools[count.index],
+      var.node_pools_std[count.index],
       "node_config_disk_size_gb",
       100
     )
@@ -255,7 +255,7 @@ resource "google_container_node_pool" "node_pool" {
     # Type of the disk attached to each node (e.g. 'pd-standard' or 'pd-ssd').
     # If unspecified, the default disk type is 'pd-standard'
     disk_type = lookup(
-      var.node_pools[count.index],
+      var.node_pools_std[count.index],
       "node_config_disk_type",
       "pd-standard",
     )
@@ -264,7 +264,7 @@ resource "google_container_node_pool" "node_pool" {
     # preemptible. See the official documentation for more information.
     # Defaults to false.
     preemptible = lookup(
-      var.node_pools[count.index],
+      var.node_pools_std[count.index],
       "node_config_preemptible",
       false,
     )
@@ -279,10 +279,10 @@ resource "google_container_node_pool" "node_pool" {
     ]
 
     labels = merge(
-      lookup(lookup(local.node_pools_labels, "default_values", {}), "cluster_name", true) ? { "cluster_name" = var.name } : {},
-      lookup(lookup(local.node_pools_labels, "default_values", {}), "node_pool", true) ? { "node_pool" = each.value["name"] } : {},
-      local.node_pools_labels["all"],
-      local.node_pools_labels[each.value["name"]],
+      lookup(lookup(local.node_pools_std_labels, "default_values", {}), "cluster_name", true) ? { "cluster_name" = var.name } : {},
+      lookup(lookup(local.node_pools_std_labels, "default_values", {}), "node_pool", true) ? { "node_pool" = each.value["name"] } : {},
+      local.node_pools_std_labels["all"],
+      local.node_pools_std_labels[each.value["name"]],
     )
 
     # The metadata key/value pairs assigned to instances in the cluster.

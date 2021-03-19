@@ -10,7 +10,7 @@ output "endpoint" {
     * to be up.
     */
     google_container_cluster.cluster,
-    google_container_node_pool.node_pool_std,
+    google_container_node_pool.node_pool,
   ]
 }
 

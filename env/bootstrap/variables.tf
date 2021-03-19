@@ -40,7 +40,7 @@ format HH:MM, where HH : [00-23] and MM : [00-59] GMT.
 EOF
 }
 
-variable "node_pools_std" {
+variable "node_pools" {
   type = list(map(string))
 
   description = <<EOF

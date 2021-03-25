@@ -1,0 +1,122 @@
+version: 2
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: beninanutshell/terraformer:0.14.9
+  environment:
+    TF_IN_AUTOMATION: true
+
+jobs:
+  init:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: Terraform init
+          command: |
+            for dir in env/*/
+            do
+              cd ${dir}
+              env=${dir%*/}
+              env=${env#*/}
+              echo ""
+              echo "*************** TERRAFORM INIT ******************"
+              echo "******* At environment: ${env} ********"
+              echo "*************************************************"
+              echo $GCP_CREDENTIALS > terraform-deploy.json
+              terraform init -input=false
+              cd ../../
+             done
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+  plan:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Terraform plan
+          command: |
+            for dir in env/*/
+            do
+              cd ${dir}
+              env=${dir%*/}
+              env=${env#*/}
+              echo ""
+              echo "*************** TERRAFORM PLAN ******************"
+              echo "******* At environment: ${env} ********"
+              echo "*************************************************"
+              terraform plan -no-color -out=tfplan  -input=false
+              cd ../../
+             done
+      - store_artifacts:
+          path: ~/repo/tfplan
+          destination: tfplan
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+  apply:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Terraform apply
+          command: |
+            for dir in env/*/
+            do
+              cd ${dir}
+              env=${dir%*/}
+              env=${env#*/}
+              echo ""
+              echo "*************** TERRAFORM APPLY ******************"
+              echo "******* At environment: ${env} ********"
+              echo "*************************************************"
+              terraform apply -input=false -auto-approve tfplan
+              cd ../../
+             done
+  destroy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Terraform destroy
+          command: |
+            for dir in env/*/
+            do
+              cd ${dir}
+              env=${dir%*/}
+              env=${env#*/}
+              echo ""
+              echo "*************** TERRAFORM DESTROY ******************"
+              echo "******* At environment: ${env} ********"
+              echo "*************************************************"
+              terraform destroy -input=false -auto-approve
+              cd ../../
+             done
+
+workflows:
+  version: 2
+  build_deploy:
+    jobs:
+      - init
+      - plan:
+          requires:
+            - init
+      - apply:
+          requires:
+            - plan
+          filters:
+            branches:
+              only:
+                - main
+      - destroy:
+          requires:
+            - plan
+          filters:
+            branches:
+              only:
+                - destroy

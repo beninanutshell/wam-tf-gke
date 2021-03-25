@@ -336,3 +336,13 @@ variable "enable_shielded_nodes" {
 (Optional) Enable Shielded Nodes features on all nodes in this cluster. Defaults to false.
 EOF
 }
+
+variable "node_locations" {
+  type = list(string)
+
+  description = <<EOF
+  (Optional) The list of zones in which the cluster's nodes are located.
+  Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters.
+  If this is specified for a zonal cluster, omit the cluster's zone.
+EOF
+}

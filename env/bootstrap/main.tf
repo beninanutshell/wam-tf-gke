@@ -10,5 +10,5 @@ module "gke-cluster" {
   vpc_subnetwork_name                 = var.vpc_subnetwork_name
   services_secondary_range_name       = var.services_secondary_range_name
   cluster_secondary_range_name        = var.cluster_secondary_range_name
-
+  node_locations                      = var.node_locations
 }

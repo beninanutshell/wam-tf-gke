@@ -274,3 +274,13 @@ supported identity namespace is the project's default
 https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
 EOF
 }
+
+variable "node_locations" {
+  type = list(string)
+
+  description = <<EOF
+(Optional) The list of zones in which the cluster's nodes are located.
+Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters.
+If this is specified for a zonal cluster, omit the cluster's zone.
+EOF
+}

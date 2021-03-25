@@ -42,6 +42,8 @@ resource "google_container_cluster" "cluster" {
 
   location = var.gcp_location
 
+  node_locations = var.node_locations
+
   name = var.cluster_name
 
   min_master_version = local.min_master_version

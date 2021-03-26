@@ -16,7 +16,7 @@ jobs:
           name: Terraform init
           command: |
             echo $GPG_KEY | tr ',' '\n' > ./private_key.gpg
-            gpg --import ./private_key.gpg
+            gpg --batch --import ./private_key.gpg
             git-secret reveal
             for dir in env/*/
             do

@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  git-secret: lyvly/git-secret@0.1.0
-
 defaults: &defaults
   working_directory: ~/repo
   docker:
@@ -15,10 +12,12 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - git-secret/install_and_decrypt
       - run:
           name: Terraform init
           command: |
+            echo $GPG_PRIVATE_KEY > ./private_key.gpg
+            gpg --import ./private_key.gpg
+            git secret reveal
             for dir in env/*/
             do
               cd ${dir}

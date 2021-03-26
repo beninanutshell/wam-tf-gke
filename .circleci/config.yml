@@ -15,8 +15,8 @@ jobs:
       - run:
           name: Terraform init
           command: |
-            echo $GPG_KEY > ./private_key.gpg
-            echo -e "$GPG_KEY" | gpg --import
+            echo $GPG_KEY | tr ',' '\n' > ./private_key.gpg
+            gpg --import ./private_key.gpg
             git-secret reveal
             for dir in env/*/
             do
@@ -27,7 +27,7 @@ jobs:
               echo "*************** TERRAFORM INIT ******************"
               echo "******* At environment: ${env} ********"
               echo "*************************************************"
-              echo $GPG_KEY > terraform-deploy.json
+              echo $GCP_CREDENTIALS	 > terraform-deploy.json
               terraform init -input=false
               cd ../../
              done

@@ -1,4 +1,7 @@
-version: 2
+version: 2.1
+
+orbs:
+  git-secret: lyvly/git-secret@0.1.0
 
 defaults: &defaults
   working_directory: ~/repo
@@ -12,6 +15,15 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+      - attach_workspace:
+          at: ./
+      - install_git_secret
+      - import_gpg_key
+      - reveal_secrets
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - ./
       - run:
           name: Terraform init
           command: |

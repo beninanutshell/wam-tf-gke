@@ -12,3 +12,4 @@ module "gke-cluster" {
   cluster_secondary_range_name        = var.cluster_secondary_range_name
   node_locations                      = var.node_locations
 }
+

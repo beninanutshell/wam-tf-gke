@@ -270,7 +270,7 @@ resource "google_container_node_pool" "node_pool" {
     preemptible = lookup(
       var.node_pools[count.index],
       "node_config_preemptible",
-      false,
+      true,
     )
 
     # The set of Google API scopes to be made available on all of the node VMs

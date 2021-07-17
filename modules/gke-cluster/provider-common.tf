@@ -6,6 +6,7 @@ terraform {
 
   required_version = ">= 1.0.0, < 2.0.0"
   experiments      = [module_variable_optional_attrs]
+
   required_providers {
     google = {
       version = ">= 3.69.0, < 4"

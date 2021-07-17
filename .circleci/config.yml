@@ -27,7 +27,8 @@ jobs:
               echo "*************** TERRAFORM INIT ******************"
               echo "******* At environment: ${env} ********"
               echo "*************************************************"
-              echo $GCP_CREDENTIALS	 > terraform-deploy.json
+              echo $GCP_CREDENTIALS	 > ~/terraform-deploy.json
+              export GOOGLE_APPLICATION_CREDENTIALS="~/terraform-deploy.json"
               terraform init -input=false
               cd ../../
              done

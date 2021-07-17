@@ -15,9 +15,9 @@ jobs:
       - run:
           name: Terraform init
           command: |
-            echo $GPG_KEY | tr ',' '\n' > ./private_key.gpg
-            gpg --import --batch ./private_key.gpg
-            git-secret reveal -p $GPG_PASSWD
+            #echo $GPG_KEY | tr ',' '\n' > ./private_key.gpg
+            #gpg --import --batch ./private_key.gpg
+            #git-secret reveal -p $GPG_PASSWD
             for dir in live/*/
             do
               cd ${dir}

@@ -18,7 +18,7 @@ jobs:
             echo $GPG_KEY | tr ',' '\n' > ./private_key.gpg
             gpg --import --batch ./private_key.gpg
             git-secret reveal -p $GPG_PASSWD
-            for dir in env/*/
+            for dir in live/*/
             do
               cd ${dir}
               env=${dir%*/}
@@ -42,7 +42,7 @@ jobs:
       - run:
           name: Terraform plan
           command: |
-            for dir in env/*/
+            for dir in live/*/
             do
               cd ${dir}
               env=${dir%*/}
@@ -68,7 +68,7 @@ jobs:
       - run:
           name: Terraform apply
           command: |
-            for dir in env/*/
+            for dir in live/*/
             do
               cd ${dir}
               env=${dir%*/}
@@ -115,7 +115,7 @@ workflows:
           filters:
             branches:
               only:
-                - main
+                - master
       - destroy:
           requires:
             - plan

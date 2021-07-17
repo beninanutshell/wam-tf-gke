@@ -1,0 +1,24 @@
+{
+  "Modules": [
+    {
+      "Dir": "../../modules/gke-cluster",
+      "Key": "gke-cluster",
+      "Source": "../../modules/gke-cluster/"
+    },
+    {
+      "Dir": "../../modules/gke-node-pool",
+      "Key": "gke-ndoe-pool",
+      "Source": "../../modules/gke-node-pool/"
+    },
+    {
+      "Dir": ".",
+      "Key": "",
+      "Source": ""
+    },
+    {
+      "Dir": "../../modules/gke-node-pool",
+      "Key": "gke-node-pool",
+      "Source": "../../modules/gke-node-pool/"
+    }
+  ]
+}

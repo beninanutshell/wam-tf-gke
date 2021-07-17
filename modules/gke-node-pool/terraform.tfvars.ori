@@ -1,0 +1,18 @@
+project_id = "hprod-matthieu-eu-74f9"
+region     = "europe-west1"
+map_node_pools = {
+  general-purpose = {
+    cluster                = "kube-production"
+    name                   = "general"
+    location               = "europe-west1"
+    autoscaling            = true
+    service_account        = "sa-gke-node-hprod@hprod-matthieu-eu-74f9.iam.gserviceaccount.com"
+    enable_cluster_sandbox = false
+    enable_taint           = false
+    labels = {
+      clusterName  = "gke-test"
+      region       = "europe-west1"
+      workloadType = "general-purpose"
+    }
+  },
+}

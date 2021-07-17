@@ -1,0 +1,57 @@
+project_id        = "hprod-matthieu-eu-74f9"
+name              = "kube-production"
+location          = "europe-west1"
+update_start_time = "2020-05-21T22:00:00.00Z"
+update_end_time   = "2020-05-22T02:00:00.00Z"
+update_recurrence = "FREQ=DAILY"
+maintenance_exclusion = {
+  new-year = {
+    exclusion_update_name       = "new-year"
+    exclusion_update_start_time = "2021-12-31T22:00:00.00Z"
+    exclusion_update_end_time   = "2022-01-20T22:00:00.00Z"
+  },
+}
+notification_config_topic  = "projects/hprod-matthieu-eu-74f9/topics/upgrade_kubernetes"
+enable_cluster_autoscaling = true
+min_cpu_platform           = "Intel Cascade Lake"
+cluster_network_policy     = false
+autoscaling_resource_limits = {
+  cpu = {
+    resource_type = "cpu"
+    minimum       = 2
+    maximum       = 8
+  },
+  memory = {
+    resource_type = "memory"
+    minimum       = 8
+    maximum       = 32
+  }
+}
+master_ipv4_cidr_block        = "172.16.255.176/28"
+network                       = "projects/hprod-matthieu-eu-74f9/global/networks/vpc-hprod-r-and-d"
+subnetwork                    = "projects/hprod-matthieu-eu-74f9/regions/europe-west1/subnetworks/subnet-euw1-r-and-d-gke-nodes"
+cluster_secondary_range_name  = "pods"
+services_secondary_range_name = "svc"
+authorized_cidr_blocks_list = [
+  {
+    cidr_block   = "94.205.213.234/32"
+    display_name = "matthieu-dubai-hotel"
+  },
+  {
+    cidr_block   = "34.78.108.120/32"
+    display_name = "gitlab-runner-ip"
+  },
+  {
+    cidr_block   = "2.49.127.14/32"
+    display_name = "matthieu"
+  },
+]
+key_name              = "projects/hprod-matthieu-eu-74f9/locations/europe-west1/keyRings/key-ring-hprod-r-and-d-61208/cryptoKeys/crypto-key-hprod-euw1-6626"
+domain_cloud_identity = "gcp.devoteamgcloud.com"
+labels = {
+  cluster-name = "hprod-recherche-development"
+  region       = "europe-west1"
+}
+cluster_telemetry_is_set = true
+dataset_id               = "gke_usage_metering_r_and_d"
+service_account          = "sa-gke-node-hprod@hprod-matthieu-eu-74f9.iam.gserviceaccount.com"

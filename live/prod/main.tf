@@ -2,7 +2,7 @@ module "gke-cluster" {
   source = "../../modules/gke-cluster/"
 
   project_id        = "wam-shared-bootstrap-797e"
-  name              = "wam-kube-production"
+  name              = "wam-k8s-gitops-tf-demo"
   location          = "europe-west1"
   update_start_time = "2020-05-21T22:00:00.00Z"
   update_end_time   = "2020-05-22T02:00:00.00Z"
@@ -42,7 +42,7 @@ module "gke-cluster" {
   ]
   domain_cloud_identity = "beninanutshell.com"
   labels = {
-    cluster-name = "wam-recherche-development"
+    cluster-name = "wam-k8s-gitops-tf-demo"
     region       = "europe-west1"
   }
   cluster_telemetry_is_set = true
@@ -58,7 +58,7 @@ module "gke-node-pool" {
   region     = "europe-west1"
   map_node_pools = {
     general-purpose = {
-      cluster                = "wam-kube-production"
+      cluster                = "wam-k8s-gitops-tf-demo"
       name                   = "general"
       machine_type           = "n2-standard-2"
       location               = "europe-west1"

@@ -60,7 +60,7 @@ module "gke-node-pool" {
     general-purpose = {
       cluster                = "wam-kube-production"
       name                   = "general"
-      machine_type           = "n1-standard-2"
+      machine_type           = "n2-standard-2"
       location               = "europe-west1"
       autoscaling            = true
       service_account        = "wam-sac-gke-demo@wam-shared-bootstrap-797e.iam.gserviceaccount.com"

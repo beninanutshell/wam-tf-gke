@@ -1,5 +1,20 @@
 terraform {
-  required_version = "~> 0.12"
+  required_version = "~> 1.0"
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 3.0"
+    }
+    google-beta = {
+      source  = "hashicorp/google"
+      version = "~> 3.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
+    }
+
+  }
 }
 
 # Local values assign a name to an expression, that can then be used multiple
@@ -23,8 +38,9 @@ provider "google" {
 }
 
 provider "google-beta" {
-  project     = var.gcp_project_id
-  region      = local.gcp_region
+  project = var.gcp_project_id
+  region  = local.gcp_region
+  #version     = "~> 3.0"
   credentials = file("terraform-deploy.json")
 }
 
@@ -39,6 +55,7 @@ data "google_client_config" "default" {}
 
 
 # https://www.terraform.io/docs/providers/google/r/container_cluster.html
+#tfsec:ignore:google-gke-enforce-pod-security-policy
 resource "google_container_cluster" "cluster" {
   provider = google-beta
 
@@ -93,6 +110,7 @@ resource "google_container_cluster" "cluster" {
   }
 
   # Enable the PodSecurityPolicy admission controller for the cluster.
+  #tfsec:ignore:GCP009
   pod_security_policy_config {
     enabled = var.pod_security_policy_enabled #tfsec:ignore:GCP009
   }
@@ -110,8 +128,8 @@ resource "google_container_cluster" "cluster" {
 
   master_auth {
     # Setting an empty username and password explicitly disables basic auth
-    username = ""
-    password = ""
+    #username = ""
+    #password = ""
 
     # Whether client certificate authorization is enabled for this cluster.
     client_certificate_config {
@@ -235,7 +253,7 @@ resource "google_container_node_pool" "node_pool" {
     image_type = lookup(
       var.node_pools[count.index],
       "image_type",
-      "COS"
+      "COS_CONTAINERD"
     )
 
     # The name of a Google Compute Engine machine type. Defaults to

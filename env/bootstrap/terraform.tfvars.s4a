@@ -1,0 +1,46 @@
+gcp_project_id = "s4a-digital-tooling-prod"
+cluster_name = "bc-gke-debug"
+gcp_location = "europe-west1"
+node_locations = ["europe-west1-b", "europe-west1-d", "europe-west1-c"]
+
+daily_maintenance_window_start_time = "03:00"
+
+node_pools = [
+  {
+    name                       = "bc-np-debug-001"
+    initial_node_count         = 1
+    autoscaling_min_node_count = 2
+    autoscaling_max_node_count = 3
+    management_auto_upgrade    = true
+    management_auto_repair     = true
+    node_config_machine_type   = "n1-standard-1"
+    node_config_disk_type      = "pd-standard"
+    node_config_disk_size_gb   = 100
+    node_config_preemptible    = false
+  },
+]
+
+
+vpc_network_name = "projects/s4a-shared-nhp-prod/global/networks/s4a-shared-xpn-prod"
+vpc_subnetwork_name = "projects/s4a-shared-nhp-prod/regions/europe-west1/subnetworks/s4a-shared-sub-digital-tooling-gke-prod"
+vpc_subnetwork_cidr_range = "172.28.130.0/24"
+
+cluster_secondary_range_name = "s4a-shared-sir-digital-tooling-gke-pods-prod"
+cluster_secondary_range_cidr = "172.29.40.0/21"
+
+services_secondary_range_name = "s4a-shared-sir-digital-tooling-gke-svc-prod"
+services_secondary_range_cidr = "172.28.194.0/23"
+
+master_ipv4_cidr_block = "172.28.224.112/28"
+
+access_private_images = "false"
+
+http_load_balancing_disabled = "false"
+
+master_authorized_networks_cidr_blocks = [
+  {
+    cidr_block = "0.0.0.0/0"
+    display_name = "default"
+  },
+]
+

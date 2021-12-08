@@ -1,6 +1,3 @@
-provider "random" {
-}
-
 resource "random_id" "entropy" {
   byte_length = 6
 }

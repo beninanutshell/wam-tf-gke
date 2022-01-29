@@ -3,7 +3,7 @@ version: 2.1
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: beninanutshell/terraformer:0.14.9
+    - image: beninanutshell/terraformer:1.0.2
   environment:
     TF_IN_AUTOMATION: true
 
@@ -17,6 +17,7 @@ jobs:
           command: |
             echo $GPG_KEY | tr ',' '\n' > ./private_key.gpg
             gpg --import --batch ./private_key.gpg
+            echo $GPG_PASSWD
             git-secret reveal -p $GPG_PASSWD
             for dir in env/*/
             do

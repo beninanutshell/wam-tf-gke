@@ -54,18 +54,13 @@ data "google_client_config" "default" {}
 # https://www.terraform.io/docs/providers/google/r/container_cluster.html
 #tfsec:ignore:google-gke-enforce-pod-security-policy tfsec:ignore:google-gke-node-pool-uses-cos tfsec:ignore:google-gke-enable-network-policy
 resource "google_container_cluster" "cluster" {
-  provider = google-beta
 
-  location = var.gcp_location
-
-  project = var.gcp_project_id
-
-  node_locations = var.node_locations
-
-  name = local.cluster_name
-
-  min_master_version = local.min_master_version
-
+  provider              = google-beta
+  location              = var.gcp_location
+  project               = var.gcp_project_id
+  node_locations        = var.node_locations
+  name                  = local.cluster_name
+  min_master_version    = local.min_master_version
   enable_shielded_nodes = "true"
 
   dynamic "release_channel" {
@@ -180,9 +175,7 @@ resource "google_container_cluster" "cluster" {
   }
 
   node_config {
-
     service_account = google_service_account.default.email
-
   }
 
   # The loggingservice that the cluster should write logs to. Using the

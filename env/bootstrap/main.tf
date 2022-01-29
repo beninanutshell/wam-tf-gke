@@ -11,5 +11,8 @@ module "gke-cluster" {
   services_secondary_range_name       = var.services_secondary_range_name
   cluster_secondary_range_name        = var.cluster_secondary_range_name
   node_locations                      = var.node_locations
+  labels                              = var.labels
+  enable_dataplane_v2                 = false
+  node_pool_additional_labels_i       = var.node_pool_additional_labels_i
 }
 

@@ -1,5 +1,5 @@
-gcp_project_id = "s4a-digital-tooling-prod"
-cluster_name = "bc-gke-debug"
+gcp_project_id = "s4a-shared-nhp-prod"
+cluster_name = "s4a-gke-private-catalog"
 gcp_location = "europe-west1"
 node_locations = ["europe-west1-b", "europe-west1-d", "europe-west1-c"]
 
@@ -22,16 +22,16 @@ node_pools = [
 
 
 vpc_network_name = "projects/s4a-shared-nhp-prod/global/networks/s4a-shared-xpn-prod"
-vpc_subnetwork_name = "projects/s4a-shared-nhp-prod/regions/europe-west1/subnetworks/s4a-shared-sub-digital-tooling-gke-prod"
-vpc_subnetwork_cidr_range = "172.28.130.0/24"
+vpc_subnetwork_name = "projects/s4a-shared-nhp-prod/regions/europe-west1/subnetworks/s4a-shared-sub-socle-core-gke-prod"
+vpc_subnetwork_cidr_range = "172.28.128.192/28"
 
-cluster_secondary_range_name = "s4a-shared-sir-digital-tooling-gke-pods-prod"
-cluster_secondary_range_cidr = "172.29.40.0/21"
+cluster_secondary_range_name = "s4a-shared-sir-socle-core-gke-pods-prod"
+cluster_secondary_range_cidr = "172.29.64.0/20"
 
-services_secondary_range_name = "s4a-shared-sir-digital-tooling-gke-svc-prod"
-services_secondary_range_cidr = "172.28.194.0/23"
+services_secondary_range_name = "s4a-shared-sir-socle-core-gke-svc-prod"
+services_secondary_range_cidr = "172.28.193.64/26"
 
-master_ipv4_cidr_block = "172.28.224.112/28"
+master_ipv4_cidr_block = "172.28.224.96/28"
 
 access_private_images = "false"
 
@@ -43,4 +43,3 @@ master_authorized_networks_cidr_blocks = [
     display_name = "default"
   },
 ]
-

@@ -1,17 +1,17 @@
 terraform {
-  required_version = "~> 1.0"
+  required_version = ">= 1.0.0"
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "~> 3.0"
+      version = ">= 4.0.0"
     }
     google-beta = {
       source  = "hashicorp/google"
-      version = "~> 3.0"
+      version = ">= 4.0.0"
     }
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.0"
+      version = ">= 3.1.0"
     }
 
   }
@@ -26,22 +26,20 @@ locals {
   cluster_endpoint             = google_container_cluster.cluster.endpoint
   release_channel              = var.release_channel == "" ? [] : [var.release_channel]
   min_master_version           = var.release_channel == "" ? var.min_master_version : ""
-  identity_namespace           = var.identity_namespace == "" ? [] : [var.identity_namespace]
+  workload_pool                = var.workload_pool == "" ? [] : [var.workload_pool]
   authenticator_security_group = var.authenticator_security_group == "" ? [] : [var.authenticator_security_group]
-
+  cluster_name                 = "${var.gcp_project_id}-kcl-${var.cluster_name}"
+  cluster_labels               = merge(var.cluster_additional_labels, tomap(var.labels))
 }
 
 provider "google" {
-  project     = var.gcp_project_id
-  region      = local.gcp_region
-  credentials = file("terraform-deploy.json")
+  project = var.gcp_project_id
+  region  = local.gcp_region
 }
 
 provider "google-beta" {
   project = var.gcp_project_id
   region  = local.gcp_region
-  #version     = "~> 3.0"
-  credentials = file("terraform-deploy.json")
 }
 
 provider "kubernetes" {
@@ -53,17 +51,18 @@ provider "kubernetes" {
 
 data "google_client_config" "default" {}
 
-
 # https://www.terraform.io/docs/providers/google/r/container_cluster.html
-#tfsec:ignore:google-gke-enforce-pod-security-policy
+#tfsec:ignore:google-gke-enforce-pod-security-policy tfsec:ignore:google-gke-node-pool-uses-cos tfsec:ignore:google-gke-enable-network-policy
 resource "google_container_cluster" "cluster" {
   provider = google-beta
 
   location = var.gcp_location
 
+  project = var.gcp_project_id
+
   node_locations = var.node_locations
 
-  name = var.cluster_name
+  name = local.cluster_name
 
   min_master_version = local.min_master_version
 
@@ -87,11 +86,11 @@ resource "google_container_cluster" "cluster" {
 
   # Configure workload identity if set
   dynamic "workload_identity_config" {
-    for_each = toset(local.identity_namespace)
+    for_each = toset(local.workload_pool)
 
     content {
-      #identity_namespace = workload_identity_config.value
-      identity_namespace = "${var.gcp_project_id}.svc.id.goog"
+      #workload_pool = workload_identity_config.value
+      workload_pool = "${var.gcp_project_id}.svc.id.goog"
     }
   }
 
@@ -109,22 +108,18 @@ resource "google_container_cluster" "cluster" {
     master_ipv4_cidr_block = var.master_ipv4_cidr_block
   }
 
-  # Enable the PodSecurityPolicy admission controller for the cluster.
-  #tfsec:ignore:GCP009
-  pod_security_policy_config {
-    enabled = var.pod_security_policy_enabled #tfsec:ignore:GCP009
-  }
-
   # Configuration options for the NetworkPolicy feature.
   network_policy {
     # Whether network policy is enabled on the cluster. Defaults to false.
     # In GKE this also enables the ip masquerade agent
     # https://cloud.google.com/kubernetes-engine/docs/how-to/ip-masquerade-agent
-    enabled = true
-
+    enabled = var.enable_dataplane_v2 ? false : true
     # The selected network policy provider. Defaults to PROVIDER_UNSPECIFIED.
-    provider = "CALICO"
+    #provider = "CALICO"
+    provider = var.enable_dataplane_v2 ? "PROVIDER_UNSPECIFIED" : "CALICO"
   }
+  # This is where Dataplane V2 is enabled.
+  datapath_provider = var.enable_dataplane_v2 ? "ADVANCED_DATAPATH" : "DATAPATH_PROVIDER_UNSPECIFIED"
 
   master_auth {
     # Setting an empty username and password explicitly disables basic auth
@@ -206,11 +201,16 @@ resource "google_container_cluster" "cluster" {
   timeouts {
     update = "20m"
   }
+
+  resource_labels = local.cluster_labels
 }
 
 # https://www.terraform.io/docs/providers/google/r/container_node_pool.html
+#tfsec:ignore-google-gke-node-pool-uses-cos
 resource "google_container_node_pool" "node_pool" {
   provider = google
+
+  project = var.gcp_project_id
 
   # The location (region or zone) in which the cluster resides
   location = google_container_cluster.cluster.location
@@ -219,7 +219,8 @@ resource "google_container_node_pool" "node_pool" {
 
   # The name of the node pool. Instance groups created will have the cluster
   # name prefixed automatically.
-  name = format("%s-np", lookup(var.node_pools[count.index], "name", format("%03d", count.index + 1)))
+  #  name = format("%s-np", lookup(var.node_pools[count.index], "name", format("%03d", count.index + 1)))
+  name = "${var.gcp_project_id}-npl-${var.cluster_name}-${lookup(var.node_pools[count.index], "name", format("%03d", count.index + 1))}"
 
   # The cluster to create the node pool for.
   cluster = google_container_cluster.cluster.name
@@ -249,6 +250,7 @@ resource "google_container_node_pool" "node_pool" {
 
   # Parameters used in creating the cluster's nodes.
   node_config {
+    labels = merge(var.node_pool_additional_labels, lookup(var.node_pool_additional_labels_i, var.node_pools[count.index].name, {}), tomap(var.labels))
     # The image rype of a Google Compute Engine.
     image_type = lookup(
       var.node_pools[count.index],
@@ -314,5 +316,3 @@ resource "google_container_node_pool" "node_pool" {
     update = "20m"
   }
 }
-
-

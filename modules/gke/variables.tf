@@ -314,7 +314,7 @@ https://cloud.google.com/kubernetes-engine/docs/how-to/pod-security-policies
 EOF
 }
 
-variable "identity_namespace" {
+variable "workload_pool" {
   type = string
 
   default = ""
@@ -328,9 +328,8 @@ EOF
 }
 
 variable "enable_shielded_nodes" {
-  type = string
-
-  default = "true"
+  type    = string
+  default = true
 
   description = <<EOF
 (Optional) Enable Shielded Nodes features on all nodes in this cluster. Defaults to false.
@@ -344,5 +343,68 @@ variable "node_locations" {
   (Optional) The list of zones in which the cluster's nodes are located.
   Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters.
   If this is specified for a zonal cluster, omit the cluster's zone.
+EOF
+}
+
+variable "labels" {
+  description = "Mandatory labels to be attached to GKE nodes"
+  type = object({
+    component    = string
+    cost_center  = string
+    environment  = string
+    manager      = string
+    owner        = string
+    service_type = string
+    state        = string
+  })
+  validation {
+    condition     = contains(["dev", "int", "e2e", "uat", "ppr", "prd"], var.labels.environment)
+    error_message = "Allowed values for labels.environment are \"dev\", \"int\", \"e2e\", \"uat\", \"ppr\" and \"prd\"."
+  }
+  validation {
+    condition     = contains(["live", "archived", "to_delete"], var.labels.state)
+    error_message = "Allowed values for labels.state are \"live\", \"archived\" and \"to_delete\"."
+  }
+}
+
+variable "cluster_additional_labels" {
+  description = "Additional labels to be attached to the GKE cluster."
+  type        = map(string)
+  default = {
+    client = null
+  }
+}
+
+variable "node_pool_additional_labels" {
+  description = "Additional labels to be attached to all the nodepools."
+  type        = map(string)
+  default = {
+    client = null
+  }
+}
+
+variable "node_pool_additional_labels_i" {
+  description = "Additional labels per nodepool to be attached to them."
+  type        = map(map(string))
+  default     = {}
+}
+
+variable "enable_dataplane_v2" {
+  type        = bool
+  default     = true
+  description = <<EOF
+GKE Dataplane V2 comes with Kubernetes network policy enforcement built-in.
+This means that you don't need to enable network policy in clusters that use GKE Dataplane V2.
+If you try to explicitly enable or disable network policy enforcement in a cluster that uses GKE Dataplane V2,
+the request will fail with the error message Enabling NetworkPolicy for clusters with DatapathProvider=ADVANCED_DATAPATH is not allowed.
+
+The following limitations apply in GKE, Anthos clusters on VMware, and all other environments:
+
+GKE Dataplane V2 can only be enabled when creating a new cluster.
+Existing clusters cannot be upgraded to use GKE Dataplane V2.
+If you enable GKE Dataplane V2 with NodeLocal DNSCache, you cannot configure Pods with dnsPolicy: ClusterFirstWithHostNet,
+or your Pods will experience DNS resolution errors. This limitation was lifted starting with 1.20.12-gke.500 (Stable).
+
+https://cloud.google.com/kubernetes-engine/docs/how-to/dataplane-v2
 EOF
 }

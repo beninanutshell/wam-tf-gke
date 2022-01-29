@@ -107,57 +107,6 @@ instances are launched.
 EOF
 }
 
-variable "private_endpoint" {
-  type    = bool
-  default = false
-
-  description = <<EOF
-Whether the master's internal IP address is used as the cluster endpoint and the
-public endpoint is disabled.
-EOF
-}
-
-variable "private_nodes" {
-  type    = bool
-  default = true
-
-  description = <<EOF
-Whether nodes have internal IP addresses only. If enabled, all nodes are given
-only RFC 1918 private addresses and communicate with the master via private
-networking.
-EOF
-}
-
-variable "enable_cloud_nat" {
-  type        = bool
-  default     = true
-  description = <<EOF
-Whether to enable Cloud NAT. This can be used to allow private cluster nodes to
-accesss the internet. Defaults to 'true'.
-EOF
-}
-
-variable "enable_cloud_nat_logging" {
-  type        = bool
-  default     = true
-  description = <<EOF
-Whether the NAT should export logs. Defaults to 'true'.
-EOF
-}
-
-variable "cloud_nat_logging_filter" {
-  type        = string
-  default     = "ERRORS_ONLY"
-  description = <<EOF
-What filtering should be applied to logs for this NAT. Valid values are:
-'ERRORS_ONLY', 'TRANSLATIONS_ONLY', 'ALL'. Defaults to 'ERRORS_ONLY'.
-EOF
-}
-
-variable "vpc_subnetwork_cidr_range" {
-  type = string
-}
-
 variable "cluster_secondary_range_name" {
   type = string
 
@@ -168,10 +117,6 @@ existing secondary range associated with the cluster subnetwork.
 EOF
 }
 
-variable "cluster_secondary_range_cidr" {
-  type = string
-}
-
 variable "services_secondary_range_name" {
   type = string
 
@@ -180,10 +125,6 @@ The name of the secondary range to be used as for the services CIDR block.
 The secondary range will be used for service ClusterIPs. This must be an
 existing secondary range associated with the cluster subnetwork.
 EOF
-}
-
-variable "services_secondary_range_cidr" {
-  type = string
 }
 
 variable "master_ipv4_cidr_block" {
@@ -226,17 +167,128 @@ variable "master_authorized_networks_cidr_blocks" {
     {
       # External network that can access Kubernetes master through HTTPS. Must
       # be specified in CIDR notation. This block should allow access from any
-      # address, but is given explicitly to prevernt Google's defaults from
+      # address, but is given explicitly to prevent Google's defaults from
       # fighting with Terraform.
       cidr_block = "0.0.0.0/0"
       # Field for users to identify CIDR blocks.
-      display_name = "default"
+      display_name = "openbar-demo"
     },
   ]
 
   description = <<EOF
 Defines up to 20 external networks that can access Kubernetes master
 through HTTPS.
+EOF
+}
+
+variable "min_master_version" {
+  type = string
+
+  default = ""
+
+  description = <<EOF
+The minimum version of the master. GKE will auto-update the master to new
+versions, so this does not guarantee the current master version. Use the
+read-only 'master_version' field to obtain that. If unset, the cluster's
+version will be set by GKE to the version of the most recent official release
+(which is not necessarily the latest version). Most users will find the
+'google_container_engine_versions' data source useful - it indicates which
+versions are available. If you intend to specify versions manually, the
+docs describe the various acceptable formats for this field.
+
+This can be a specific version such as '1.16.8-gke.N', a patch or minor version
+such as '1.X', the latest available version with 'latest', or the default
+version with '-'.
+
+Creating or upgrading a cluster by specifying the version as latest does not
+provide automatic upgrades.
+
+This option is overriden if a 'release_channel' is set.
+
+https://cloud.google.com/kubernetes-engine/versioning-and-upgrades#specifying_cluster_version
+EOF
+}
+
+variable "release_channel" {
+  type = string
+
+  default = "REGULAR"
+
+  description = <<EOF
+Kubernetes releases updates often, to deliver security updates, fix known
+issues, and introduce new features. Release channels provide control over how
+often clusters are automatically updated, and offer customers the ability to
+balance between stability and functionality of the version deployed in the
+cluster.
+
+When you enroll a cluster in a release channel, Google automatically manages the
+version and upgrade cadence for the cluster and its node pools. All channels
+offer supported releases of GKE and are considered GA (although individual
+features may not always be GA, as marked). The Kubernetes releases in these
+channels are official Kubernetes releases and include both GA and beta
+Kubernetes APIs (as marked). New Kubernetes versions are first released to the
+Rapid channel, and over time will be promoted to the Regular, and Stable
+channel. This allows you to subscribe your cluster to a channel that meets your
+business, stability, and functionality needs.
+
+This can be one of 'RAPID', 'REGULAR', or 'STABLE'.
+
+Setting a release channel overrides the 'min_master_version' option.
+
+https://cloud.google.com/kubernetes-engine/docs/concepts/release-channels
+EOF
+}
+
+variable "authenticator_security_group" {
+  type = string
+
+  default = ""
+
+  description = <<EOF
+The name of the RBAC security group for use with Google security groups in
+Kubernetes RBAC. Group name must be in format
+gke-security-groups@yourdomain.com.
+EOF
+}
+
+variable "stackdriver_logging" {
+  type    = bool
+  default = true
+
+  description = <<EOF
+Whether Stackdriver Kubernetes logging is enabled. This should only be set to
+"false" if another logging solution is set up.
+EOF
+}
+
+variable "stackdriver_monitoring" {
+  type    = bool
+  default = true
+
+  description = <<EOF
+Whether Stackdriver Kubernetes monitoring is enabled. This should only be set to
+"false" if another monitoring solution is set up.
+EOF
+}
+
+variable "private_endpoint" {
+  type    = bool
+  default = false
+
+  description = <<EOF
+Whether the master's internal IP address is used as the cluster endpoint and the
+public endpoint is disabled.
+EOF
+}
+
+variable "private_nodes" {
+  type    = bool
+  default = true
+
+  description = <<EOF
+Whether nodes have internal IP addresses only. If enabled, all nodes are given
+only RFC 1918 private addresses and communicate with the master via private
+networking.
 EOF
 }
 
@@ -262,7 +314,7 @@ https://cloud.google.com/kubernetes-engine/docs/how-to/pod-security-policies
 EOF
 }
 
-variable "identity_namespace" {
+variable "workload_pool" {
   type = string
 
   default = ""
@@ -275,12 +327,84 @@ https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
 EOF
 }
 
+variable "enable_shielded_nodes" {
+  type    = string
+  default = true
+
+  description = <<EOF
+(Optional) Enable Shielded Nodes features on all nodes in this cluster. Defaults to false.
+EOF
+}
+
 variable "node_locations" {
   type = list(string)
 
   description = <<EOF
-(Optional) The list of zones in which the cluster's nodes are located.
-Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters.
-If this is specified for a zonal cluster, omit the cluster's zone.
+  (Optional) The list of zones in which the cluster's nodes are located.
+  Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters.
+  If this is specified for a zonal cluster, omit the cluster's zone.
+EOF
+}
+
+variable "labels" {
+  description = "Mandatory labels to be attached to GKE nodes"
+  type = object({
+    component    = string
+    cost_center  = string
+    environment  = string
+    manager      = string
+    owner        = string
+    service_type = string
+    state        = string
+  })
+  validation {
+    condition     = contains(["dev", "int", "e2e", "uat", "ppr", "prd"], var.labels.environment)
+    error_message = "Allowed values for labels.environment are \"dev\", \"int\", \"e2e\", \"uat\", \"ppr\" and \"prd\"."
+  }
+  validation {
+    condition     = contains(["live", "archived", "to_delete"], var.labels.state)
+    error_message = "Allowed values for labels.state are \"live\", \"archived\" and \"to_delete\"."
+  }
+}
+
+variable "cluster_additional_labels" {
+  description = "Additional labels to be attached to the GKE cluster."
+  type        = map(string)
+  default = {
+    client = null
+  }
+}
+
+variable "node_pool_additional_labels" {
+  description = "Additional labels to be attached to all the nodepools."
+  type        = map(string)
+  default = {
+    client = null
+  }
+}
+
+variable "node_pool_additional_labels_i" {
+  description = "Additional labels per nodepool to be attached to them."
+  type        = map(map(string))
+  default     = {}
+}
+
+variable "enable_dataplane_v2" {
+  type        = bool
+  default     = true
+  description = <<EOF
+GKE Dataplane V2 comes with Kubernetes network policy enforcement built-in.
+This means that you don't need to enable network policy in clusters that use GKE Dataplane V2.
+If you try to explicitly enable or disable network policy enforcement in a cluster that uses GKE Dataplane V2,
+the request will fail with the error message Enabling NetworkPolicy for clusters with DatapathProvider=ADVANCED_DATAPATH is not allowed.
+
+The following limitations apply in GKE, Anthos clusters on VMware, and all other environments:
+
+GKE Dataplane V2 can only be enabled when creating a new cluster.
+Existing clusters cannot be upgraded to use GKE Dataplane V2.
+If you enable GKE Dataplane V2 with NodeLocal DNSCache, you cannot configure Pods with dnsPolicy: ClusterFirstWithHostNet,
+or your Pods will experience DNS resolution errors. This limitation was lifted starting with 1.20.12-gke.500 (Stable).
+
+https://cloud.google.com/kubernetes-engine/docs/how-to/dataplane-v2
 EOF
 }

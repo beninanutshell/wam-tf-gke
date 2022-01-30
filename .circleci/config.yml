@@ -52,9 +52,9 @@ jobs:
               echo "*************** TERRAFORM PLAN ******************"
               echo "******* At environment: ${env} ********"
               echo "*************************************************"
-              echo $GCP_CREDENTIALS	 > terraform-deploy.json
-              export GOOGLE_APPLICATION_CREDENTIALS="terraform-deploy.json"
-              gcloud auth activate-service-account --key-file=.terraform-deploy.json
+              echo $GCP_CREDENTIALS	 > ./terraform-deploy.json
+              export GOOGLE_APPLICATION_CREDENTIALS="./terraform-deploy.json"
+              gcloud auth activate-service-account --key-file=./terraform-deploy.json
               terraform plan -no-color -out=tfplan  -input=false
               cd ../../
              done

@@ -119,7 +119,7 @@ workflows:
       - plan:
           requires:
             - init
-      - infracost:
+      - infracost/infracost:
           requires:
             - plan
           pre-steps:

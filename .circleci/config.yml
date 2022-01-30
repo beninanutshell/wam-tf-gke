@@ -19,7 +19,7 @@ jobs:
             gpg --import --batch ./private_key.gpg
             git-secret reveal -p $GPG_PASSWD
             echo $GCP_CREDENTIALS	 > terraform-deploy.json
-            #export GOOGLE_APPLICATION_CREDENTIALS=./terraform-deploy.json
+            export GOOGLE_APPLICATION_CREDENTIALS=./terraform-deploy.json
             for dir in env/*/
             do
               cd ${dir}

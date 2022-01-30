@@ -3,7 +3,7 @@ version: 2.1
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: beninanutshell/terraformer:1.0.2
+    - image: beninanutshell/terraformer:1.0.3
   environment:
     TF_IN_AUTOMATION: true
 

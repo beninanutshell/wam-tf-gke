@@ -18,8 +18,6 @@ jobs:
             echo $GPG_KEY | tr ',' '\n' > ./private_key.gpg
             gpg --import --batch ./private_key.gpg
             git-secret reveal -p $GPG_PASSWD
-            echo $GCP_CREDENTIALS	 > terraform-deploy.json
-            export GOOGLE_APPLICATION_CREDENTIALS=./terraform-deploy.json
             for dir in env/*/
             do
               cd ${dir}
@@ -29,7 +27,8 @@ jobs:
               echo "*************** TERRAFORM INIT ******************"
               echo "******* At environment: ${env} ********"
               echo "*************************************************"
-              #echo $GCP_CREDENTIALS	 > terraform-deploy.json
+              echo $GCP_CREDENTIALS	 > terraform-deploy.json
+              export GOOGLE_APPLICATION_CREDENTIALS="terraform-deploy.json"
               terraform init -input=false
               cd ../../
              done
@@ -53,6 +52,8 @@ jobs:
               echo "*************** TERRAFORM PLAN ******************"
               echo "******* At environment: ${env} ********"
               echo "*************************************************"
+              echo $GCP_CREDENTIALS	 > terraform-deploy.json
+              export GOOGLE_APPLICATION_CREDENTIALS="terraform-deploy.json"
               terraform plan -no-color -out=tfplan  -input=false
               cd ../../
              done
@@ -78,7 +79,9 @@ jobs:
               echo ""
               echo "*************** TERRAFORM APPLY ******************"
               echo "******* At environment: ${env} ********"
-              echo "*************************************************"
+              echo "**************************************************"
+              echo $GCP_CREDENTIALS	 > terraform-deploy.json
+              export GOOGLE_APPLICATION_CREDENTIALS="terraform-deploy.json"
               terraform apply -input=false -auto-approve tfplan
               cd ../../
              done
@@ -98,7 +101,9 @@ jobs:
               echo ""
               echo "*************** TERRAFORM DESTROY ******************"
               echo "******* At environment: ${env} ********"
-              echo "*************************************************"
+              echo "****************************************************"
+              echo $GCP_CREDENTIALS	 > terraform-deploy.json
+              export GOOGLE_APPLICATION_CREDENTIALS="terraform-deploy.json"
               terraform destroy -input=false -auto-approve
               cd ../../
              done

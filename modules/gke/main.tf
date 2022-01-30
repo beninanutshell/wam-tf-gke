@@ -33,15 +33,15 @@ locals {
 }
 
 provider "google" {
-  #credentials = file("terraform-deploy.json")
-  project = var.gcp_project_id
-  region  = local.gcp_region
+  credentials = file("../../terraform-deploy.json")
+  project     = var.gcp_project_id
+  region      = local.gcp_region
 }
 
 provider "google-beta" {
-  project = var.gcp_project_id
-  region  = local.gcp_region
-  #credentials = file("terraform-deploy.json")
+  project     = var.gcp_project_id
+  region      = local.gcp_region
+  credentials = file("../../terraform-deploy.json")
 }
 
 provider "kubernetes" {

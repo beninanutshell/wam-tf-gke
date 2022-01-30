@@ -57,8 +57,7 @@ jobs:
               echo $GCP_CREDENTIALS	 > ./terraform-deploy.json
               export GOOGLE_APPLICATION_CREDENTIALS="./terraform-deploy.json"
               terraform plan -out=tfplan.binary
-              touch ~/repo/tfplan/tfplan.json
-              terraform show -json tfplan.binary > ~/repo/tfplan/tfplan.json
+              terraform show -json tfplan.binary > tfplan.json
               cd ../../
              done
       - store_artifacts:

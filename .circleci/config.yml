@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  infracost: infracost/infracost@0.8.4
 
 defaults: &defaults
   working_directory: ~/repo
@@ -54,7 +56,8 @@ jobs:
               echo "*************************************************"
               echo $GCP_CREDENTIALS	 > ./terraform-deploy.json
               export GOOGLE_APPLICATION_CREDENTIALS="./terraform-deploy.json"
-              terraform plan -no-color -out=tfplan  -input=false
+              terraform plan -no-color -out=tfplan.binary -input=false
+              terraform show -json tfplan.binary > ~/repo/tfplan/tfplan.json
               cd ../../
              done
       - store_artifacts:
@@ -116,6 +119,13 @@ workflows:
       - plan:
           requires:
             - init
+      - infracost:
+          requires:
+            - plan
+          pre-steps:
+            - attach_workspace:
+                at: ~/repo/
+          path: ~/repo/tfplan/tfplan.json
       - apply:
           requires:
             - plan

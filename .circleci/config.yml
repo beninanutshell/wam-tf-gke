@@ -17,8 +17,6 @@ jobs:
           command: |
             echo $GPG_KEY | tr ',' '\n' > ./private_key.gpg
             gpg --import --batch ./private_key.gpg
-            echo $GPG_PASSWD > ./coucou
-            cat ./coucou
             git-secret reveal -p $GPG_PASSWD
             for dir in env/*/
             do

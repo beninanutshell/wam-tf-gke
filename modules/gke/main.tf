@@ -144,18 +144,6 @@ resource "google_container_cluster" "cluster" {
       disabled = false
     }
 
-    gcp_filestore_csi_driver_config {
-      enabled = true
-    }
-
-    gce_persistent_disk_csi_driver_config {
-      enabled = true
-    }
-
-    config_connector_config {
-      enabled = true
-    }
-
   }
 
   network    = var.vpc_network_name

@@ -131,6 +131,7 @@ resource "google_container_cluster" "cluster" {
 
   # The configuration for addons supported by GKE.
   addons_config {
+
     http_load_balancing {
       disabled = var.http_load_balancing_disabled
     }
@@ -142,6 +143,19 @@ resource "google_container_cluster" "cluster" {
     network_policy_config {
       disabled = false
     }
+
+    gcp_filestore_csi_driver_config {
+      enabled = true
+    }
+
+    gce_persistent_disk_csi_driver_config {
+      enabled = true
+    }
+
+    config_connector_config {
+      enabled = true
+    }
+
   }
 
   network    = var.vpc_network_name

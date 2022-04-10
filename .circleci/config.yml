@@ -1,6 +1,4 @@
 version: 2.1
-orbs:
-  infracost: infracost/infracost@0.8.4
 
 defaults: &defaults
   working_directory: ~/repo
@@ -119,13 +117,6 @@ workflows:
       - plan:
           requires:
             - init
-      - infracost/infracost:
-          requires:
-            - plan
-          pre-steps:
-            - attach_workspace:
-                at: ~/repo/
-          path: ~/repo/tfplan/tfplan.json
       - apply:
           requires:
             - plan

@@ -13,13 +13,13 @@ repos:
         #- id: terraform_tfsec
         #- id: checkov
         #args: ["-d", "./iac"]
-      - id: infracost_breakdown
-        args:
-          - --args=--path=./env/bootstrap/
-          #- --hook-config='.totalHourlyCost|tonumber > 0.1'
-          #- --hook-config='.totalHourlyCost|tonumber > 1'
-          #- --hook-config='.projects[].diff.totalMonthlyCost|tonumber != 10000'
-          #- --hook-config='.currency == "EU"'
+        #- id: infracost_breakdown
+        #args:
+        #- --args=--path=./env/bootstrap/
+        #- --hook-config='.totalHourlyCost|tonumber > 0.1'
+        #- --hook-config='.totalHourlyCost|tonumber > 1'
+        #- --hook-config='.projects[].diff.totalMonthlyCost|tonumber != 10000'
+        #- --hook-config='.currency == "EU"'
         verbose: true
       #- id: terrascan
       #args:

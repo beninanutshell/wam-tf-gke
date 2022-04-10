@@ -9,3 +9,4 @@ verify-terraform/
 env/bootstrap/terraform.tfvars
 .terraform.lock.hcl
 .terraform.tfstate.lock.info
+.infracost

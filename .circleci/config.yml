@@ -1,9 +1,11 @@
 version: 2.1
+orbs:
+  infracost: infracost/infracost@0.8.4
 
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: beninanutshell/terraformer:0.14.9
+    - image: beninanutshell/terraformer:1.0.3
   environment:
     TF_IN_AUTOMATION: true
 
@@ -28,6 +30,7 @@ jobs:
               echo "******* At environment: ${env} ********"
               echo "*************************************************"
               echo $GCP_CREDENTIALS	 > terraform-deploy.json
+              export GOOGLE_APPLICATION_CREDENTIALS="terraform-deploy.json"
               terraform init -input=false
               cd ../../
              done
@@ -51,7 +54,10 @@ jobs:
               echo "*************** TERRAFORM PLAN ******************"
               echo "******* At environment: ${env} ********"
               echo "*************************************************"
-              terraform plan -no-color -out=tfplan  -input=false
+              echo $GCP_CREDENTIALS	 > ./terraform-deploy.json
+              export GOOGLE_APPLICATION_CREDENTIALS="./terraform-deploy.json"
+              terraform plan -out=tfplan.binary
+              terraform show -json tfplan.binary > tfplan.json
               cd ../../
              done
       - store_artifacts:
@@ -76,7 +82,9 @@ jobs:
               echo ""
               echo "*************** TERRAFORM APPLY ******************"
               echo "******* At environment: ${env} ********"
-              echo "*************************************************"
+              echo "**************************************************"
+              echo $GCP_CREDENTIALS	 > terraform-deploy.json
+              export GOOGLE_APPLICATION_CREDENTIALS="terraform-deploy.json"
               terraform apply -input=false -auto-approve tfplan
               cd ../../
              done
@@ -96,7 +104,9 @@ jobs:
               echo ""
               echo "*************** TERRAFORM DESTROY ******************"
               echo "******* At environment: ${env} ********"
-              echo "*************************************************"
+              echo "****************************************************"
+              echo $GCP_CREDENTIALS	 > terraform-deploy.json
+              export GOOGLE_APPLICATION_CREDENTIALS="terraform-deploy.json"
               terraform destroy -input=false -auto-approve
               cd ../../
              done
@@ -109,6 +119,13 @@ workflows:
       - plan:
           requires:
             - init
+      - infracost/infracost:
+          requires:
+            - plan
+          pre-steps:
+            - attach_workspace:
+                at: ~/repo/
+          path: ~/repo/tfplan/tfplan.json
       - apply:
           requires:
             - plan

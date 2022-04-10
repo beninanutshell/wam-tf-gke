@@ -10,13 +10,21 @@ repos:
           - --hook-config=--add-to-existing-file=true
           - --hook-config=--create-file-if-not-exist=true
       - id: terraform_tflint
-      - id: terraform_tfsec
+        #- id: terraform_tfsec
         #- id: checkov
         #args: ["-d", "./iac"]
-      - id: terrascan
+      - id: infracost_breakdown
         args:
-          - --args=--policy-type=k8s
-          - --args=--verbose
+          - --args=--path=./env/bootstrap/
+          #- --hook-config='.totalHourlyCost|tonumber > 0.1'
+          #- --hook-config='.totalHourlyCost|tonumber > 1'
+          #- --hook-config='.projects[].diff.totalMonthlyCost|tonumber != 10000'
+          #- --hook-config='.currency == "EU"'
+        verbose: true
+      #- id: terrascan
+      #args:
+      #- --args=--policy-type=gcp
+      #- --args=--verbose
   - repo: git://github.com/pre-commit/pre-commit-hooks
     rev: v4.1.0
     hooks:
@@ -26,7 +34,7 @@ repos:
       - id: check-xml
       - id: check-yaml
         args: [--allow-multiple-documents]
-        #- id: detect-private-key
+      - id: detect-private-key
       - id: pretty-format-json
         args: [--autofix]
       - id: sort-simple-yaml

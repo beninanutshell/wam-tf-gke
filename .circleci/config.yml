@@ -83,7 +83,7 @@ jobs:
               echo "**************************************************"
               echo $GCP_CREDENTIALS	 > terraform-deploy.json
               export GOOGLE_APPLICATION_CREDENTIALS="terraform-deploy.json"
-              terraform apply -input=false -auto-approve tfplan
+              terraform apply -input=false -auto-approve
               cd ../../
              done
   destroy:

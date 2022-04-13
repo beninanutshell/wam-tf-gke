@@ -120,8 +120,8 @@ resource "google_container_cluster" "cluster" {
   enable_legacy_abac = false
   master_auth {
     # Setting an empty username and password explicitly disables basic auth
-    username = ""
-    password = ""
+    #username = ""
+    #password = ""
 
     # Whether client certificate authorization is enabled for this cluster.
     client_certificate_config {

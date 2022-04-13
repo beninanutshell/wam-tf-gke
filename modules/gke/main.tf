@@ -117,10 +117,11 @@ resource "google_container_cluster" "cluster" {
   # This is where Dataplane V2 is enabled.
   datapath_provider = var.enable_dataplane_v2 ? "DATAPATH_PROVIDER_UNSPECIFIED" : "ADVANCED_DATAPATH"
 
+  enable_legacy_abac = false
   master_auth {
     # Setting an empty username and password explicitly disables basic auth
-    #username = ""
-    #password = ""
+    username = ""
+    password = ""
 
     # Whether client certificate authorization is enabled for this cluster.
     client_certificate_config {

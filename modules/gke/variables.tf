@@ -408,3 +408,21 @@ or your Pods will experience DNS resolution errors. This limitation was lifted s
 https://cloud.google.com/kubernetes-engine/docs/how-to/dataplane-v2
 EOF
 }
+
+variable "filestore_csi_driver" {
+  type        = bool
+  description = "The status of the Filestore CSI driver addon, which allows the usage of filestore instance as volumes"
+  default     = true
+}
+
+variable "gce_persistent_disk_csi_driver_config" {
+  type        = bool
+  description = "Whether this cluster should enable the Google Compute Engine Persistent Disk Container Storage Interface (CSI) Driver."
+  default     = true
+}
+
+variable "config_connector_config" {
+  type        = bool
+  description = "he status of the ConfigConnector addon"
+  default     = false
+}

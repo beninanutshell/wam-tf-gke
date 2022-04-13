@@ -6,7 +6,7 @@ terraform {
       version = ">= 4.16.0"
     }
     google-beta = {
-      source  = "hashicorp/google"
+      source  = "hashicorp/google-beta"
       version = ">= 4.16.0"
     }
     random = {
@@ -33,7 +33,6 @@ locals {
 }
 
 provider "google" {
-  #credentials = file("terraform-deploy.json")
   project = var.gcp_project_id
   region  = local.gcp_region
 }
@@ -41,7 +40,6 @@ provider "google" {
 provider "google-beta" {
   project = var.gcp_project_id
   region  = local.gcp_region
-  #credentials = file("terraform-deploy.json")
 }
 
 provider "kubernetes" {
@@ -57,12 +55,13 @@ data "google_client_config" "default" {}
 #tfsec:ignore:google-gke-enforce-pod-security-policy tfsec:ignore:google-gke-node-pool-uses-cos tfsec:ignore:google-gke-enable-network-policy
 resource "google_container_cluster" "cluster" {
 
-  provider              = google-beta
-  location              = var.gcp_location
-  project               = var.gcp_project_id
-  node_locations        = var.node_locations
-  name                  = local.cluster_name
-  min_master_version    = local.min_master_version
+  provider           = google-beta
+  location           = var.gcp_location
+  project            = var.gcp_project_id
+  node_locations     = var.node_locations
+  name               = local.cluster_name
+  min_master_version = local.min_master_version
+
   enable_shielded_nodes = "true"
 
   dynamic "release_channel" {
@@ -110,13 +109,13 @@ resource "google_container_cluster" "cluster" {
     # Whether network policy is enabled on the cluster. Defaults to false.
     # In GKE this also enables the ip masquerade agent
     # https://cloud.google.com/kubernetes-engine/docs/how-to/ip-masquerade-agent
-    enabled = var.enable_dataplane_v2 ? false : true
+    enabled = var.enable_dataplane_v2 ? false : false
     # The selected network policy provider. Defaults to PROVIDER_UNSPECIFIED.
     #provider = "CALICO"
-    provider = var.enable_dataplane_v2 ? "PROVIDER_UNSPECIFIED" : "CALICO"
+    provider = var.enable_dataplane_v2 ? "CALICO" : "PROVIDER_UNSPECIFIED"
   }
   # This is where Dataplane V2 is enabled.
-  datapath_provider = var.enable_dataplane_v2 ? "ADVANCED_DATAPATH" : "DATAPATH_PROVIDER_UNSPECIFIED"
+  datapath_provider = var.enable_dataplane_v2 ? "DATAPATH_PROVIDER_UNSPECIFIED" : "ADVANCED_DATAPATH"
 
   master_auth {
     # Setting an empty username and password explicitly disables basic auth
@@ -131,11 +130,13 @@ resource "google_container_cluster" "cluster" {
 
   # The configuration for addons supported by GKE.
   addons_config {
-
     http_load_balancing {
       disabled = var.http_load_balancing_disabled
     }
 
+    horizontal_pod_autoscaling {
+      disabled = false
+    }
     # Whether we should enable the network policy addon for the master. This must be
     # enabled in order to enable network policy for the nodes. It can only be disabled
     # if the nodes already do not have network policies enabled. Defaults to disabled;
@@ -144,18 +145,34 @@ resource "google_container_cluster" "cluster" {
       disabled = false
     }
 
+    istio_config {
+      disabled = true
+      auth     = "AUTH_NONE"
+    }
+
     gcp_filestore_csi_driver_config {
-      enabled = true
+      enabled = var.filestore_csi_driver
     }
 
     gce_persistent_disk_csi_driver_config {
-      enabled = true
+      enabled = var.gce_persistent_disk_csi_driver_config
+    }
+
+    kalm_config {
+      enabled = false
     }
 
     config_connector_config {
-      enabled = true
+      enabled = var.config_connector_config
     }
+  }
 
+  identity_service_config {
+    enabled = false
+  }
+
+  vertical_pod_autoscaling {
+    enabled = true
   }
 
   network    = var.vpc_network_name
@@ -191,7 +208,9 @@ resource "google_container_cluster" "cluster" {
   }
 
   node_config {
+
     service_account = google_service_account.default.email
+
   }
 
   # The loggingservice that the cluster should write logs to. Using the

@@ -14,5 +14,7 @@ module "gke-cluster" {
   labels                              = var.labels
   enable_dataplane_v2                 = false
   node_pool_additional_labels_i       = var.node_pool_additional_labels_i
+  authenticator_security_group        = var.authenticator_security_group
+  workload_pool                       = var.workload_pool
 }
 

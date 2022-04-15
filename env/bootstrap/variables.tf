@@ -389,22 +389,28 @@ variable "node_pool_additional_labels_i" {
   default     = {}
 }
 
-variable "enable_dataplane_v2" {
+#variable "enable_dataplane_v2" {
+#type        = bool
+#default     = true
+#description = <<EOF
+#GKE Dataplane V2 comes with Kubernetes network policy enforcement built-in.
+#This means that you don't need to enable network policy in clusters that use GKE Dataplane V2.
+#If you try to explicitly enable or disable network policy enforcement in a cluster that uses GKE Dataplane V2,
+#the request will fail with the error message Enabling NetworkPolicy for clusters with DatapathProvider=ADVANCED_DATAPATH is not allowed.
+#
+#The following limitations apply in GKE, Anthos clusters on VMware, and all other environments:
+#
+#GKE Dataplane V2 can only be enabled when creating a new cluster.
+#Existing clusters cannot be upgraded to use GKE Dataplane V2.
+#If you enable GKE Dataplane V2 with NodeLocal DNSCache, you cannot configure Pods with dnsPolicy: ClusterFirstWithHostNet,
+#or your Pods will experience DNS resolution errors. This limitation was lifted starting with 1.20.12-gke.500 (Stable).
+#
+#https://cloud.google.com/kubernetes-engine/docs/how-to/dataplane-v2
+#EOF
+#}
+
+variable "cluster_network_policy" {
   type        = bool
-  default     = true
-  description = <<EOF
-GKE Dataplane V2 comes with Kubernetes network policy enforcement built-in.
-This means that you don't need to enable network policy in clusters that use GKE Dataplane V2.
-If you try to explicitly enable or disable network policy enforcement in a cluster that uses GKE Dataplane V2,
-the request will fail with the error message Enabling NetworkPolicy for clusters with DatapathProvider=ADVANCED_DATAPATH is not allowed.
-
-The following limitations apply in GKE, Anthos clusters on VMware, and all other environments:
-
-GKE Dataplane V2 can only be enabled when creating a new cluster.
-Existing clusters cannot be upgraded to use GKE Dataplane V2.
-If you enable GKE Dataplane V2 with NodeLocal DNSCache, you cannot configure Pods with dnsPolicy: ClusterFirstWithHostNet,
-or your Pods will experience DNS resolution errors. This limitation was lifted starting with 1.20.12-gke.500 (Stable).
-
-https://cloud.google.com/kubernetes-engine/docs/how-to/dataplane-v2
-EOF
+  description = "Configuration options for the NetworkPolicy based on CALICO CNI implementation."
+  default     = false
 }

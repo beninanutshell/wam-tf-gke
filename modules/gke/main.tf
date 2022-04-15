@@ -105,18 +105,25 @@ resource "google_container_cluster" "cluster" {
   }
 
   # Configuration options for the NetworkPolicy feature.
-  network_policy {
-    # Whether network policy is enabled on the cluster. Defaults to false.
-    # In GKE this also enables the ip masquerade agent
-    # https://cloud.google.com/kubernetes-engine/docs/how-to/ip-masquerade-agent
-    enabled = var.enable_dataplane_v2 ? false : false
-    # The selected network policy provider. Defaults to PROVIDER_UNSPECIFIED.
-    #provider = "CALICO"
-    provider = var.enable_dataplane_v2 ? "CALICO" : "PROVIDER_UNSPECIFIED"
+  #network_policy {
+  ## Whether network policy is enabled on the cluster. Defaults to false.
+  ## In GKE this also enables the ip masquerade agent
+  ## https://cloud.google.com/kubernetes-engine/docs/how-to/ip-masquerade-agent
+  #enabled = var.enable_dataplane_v2 ? true : false
+  ## The selected network policy provider. Defaults to PROVIDER_UNSPECIFIED.
+  ##provider = "CALICO"
+  #provider = var.enable_dataplane_v2 ? "PROVIDER_UNSPECIFIED" : "CALICO"
+  #}
+  dynamic "network_policy" {
+    for_each = var.cluster_network_policy == true ? [1] : []
+    content {
+      enabled  = true
+      provider = "CALICO"
+    }
   }
   # This is where Dataplane V2 is enabled.
-  datapath_provider = var.enable_dataplane_v2 ? "DATAPATH_PROVIDER_UNSPECIFIED" : "ADVANCED_DATAPATH"
-
+  #datapath_provider = var.enable_dataplane_v2 ? "ADVANCED_DATAPATH" : "DATAPATH_PROVIDER_UNSPECIFIED"
+  datapath_provider  = var.cluster_network_policy == true ? null : "ADVANCED_DATAPATH"
   enable_legacy_abac = false
   master_auth {
     # Setting an empty username and password explicitly disables basic auth
@@ -143,7 +150,7 @@ resource "google_container_cluster" "cluster" {
     # if the nodes already do not have network policies enabled. Defaults to disabled;
     # set disabled = false to enable.
     network_policy_config {
-      disabled = false
+      disabled = var.cluster_network_policy == true ? false : true
     }
 
     istio_config {

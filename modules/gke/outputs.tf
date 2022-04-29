@@ -20,4 +20,4 @@ output "identity_namespace" {
   depends_on = [
     google_container_cluster.cluster
   ]
-}
+} 

@@ -1,7 +1,4 @@
-module "address-lb" {
-  source  = "terraform-google-modules/address/google"
-  version = "0.1.0"
-
-  names  = [ "lb-traefik-ext-ip"]
-  global = true
+resource "google_compute_address" "load_balancer_ip" {
+  name         = ""
+  address_type = "EXTERNAL"
 }

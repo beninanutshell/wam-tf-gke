@@ -1,4 +1,4 @@
 resource "google_compute_address" "load_balancer_ip" {
-  name         = ""
+  name         = "lb-external-ip"
   address_type = "EXTERNAL"
 }

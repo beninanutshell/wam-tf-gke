@@ -1,5 +1,7 @@
 name: Infracost
-on: [pull_request]
+on:
+  push:
+    branches: [ main ]
 
 env:
   # If you use private modules you'll need this env variable to use 

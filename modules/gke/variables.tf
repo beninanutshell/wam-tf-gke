@@ -432,3 +432,4 @@ variable "cluster_network_policy" {
   description = "Configuration options for the NetworkPolicy based on CALICO CNI implementation."
   default     = false
 }
+

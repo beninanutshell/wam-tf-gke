@@ -1,7 +1,10 @@
-name: Lint
+name: Terraform workflows
 on:
   push:
-    branches: [ push ]
+    branches: 
+      - main
+      - testing
+      - 'feature/**'
   pull_request:
 
 jobs:

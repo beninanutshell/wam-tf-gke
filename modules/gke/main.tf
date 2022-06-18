@@ -52,7 +52,7 @@ provider "kubernetes" {
 data "google_client_config" "default" {}
 
 # https://www.terraform.io/docs/providers/google/r/container_cluster.html
-#tfsec:ignore:google-gke-enforce-pod-security-policy tfsec:ignore:google-gke-node-pool-uses-cos tfsec:ignore:google-gke-enable-network-policy
+#tfsec:ignore:google-gke-enforce-pod-security-policy tfsec:ignore:google-gke-node-pool-uses-cos tfsec:ignore:google-gke-enable-network-policy tfsec:ignore:google-gke-metadata-endpoints-disabled tfsec:ignore:google-gke-use-cluster-labels
 resource "google_container_cluster" "cluster" {
 
   provider           = google-beta
@@ -242,7 +242,7 @@ resource "google_container_cluster" "cluster" {
 }
 
 # https://www.terraform.io/docs/providers/google/r/container_node_pool.html
-#tfsec:ignore-google-gke-node-pool-uses-cos
+#tfsec:ignore:google-gke-node-metadata-security
 resource "google_container_node_pool" "node_pool" {
   provider = google
 
@@ -350,5 +350,8 @@ resource "google_container_node_pool" "node_pool" {
   # https://www.terraform.io/docs/configuration/resources.html#operation-timeouts
   timeouts {
     update = "20m"
+  }
+  workload_metadata_config {
+    node_metadata = "SECURE"
   }
 }

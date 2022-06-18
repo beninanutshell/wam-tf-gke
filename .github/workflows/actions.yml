@@ -92,6 +92,6 @@ runs:
     - ${{ inputs.baseline }}
     - ${{ inputs.hard_fail_on }}
     - ${{ inputs.soft_fail_on }}
-    - "--user ${{ inputs.container_user }}"  
+    - "--user ${{ inputs.container_user }}"
   env:
     API_KEY_VARIABLE: ${{ inputs.api-key }}

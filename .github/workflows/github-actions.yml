@@ -1,7 +1,7 @@
 name: Terraform workflows
 on:
   push:
-    branches: 
+    branches:
       - main
       - testing
       - 'feature/**'
@@ -29,28 +29,59 @@ jobs:
 
     - name: Run TFLint
       run: tflint -f compact
-
-  checkov-job:
+  tfsec:
+    name: tfsec
     runs-on: ubuntu-latest
-    name: checkov-action
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@master
-
-      - name: Run Checkov action
-        id: checkov
-        uses: bridgecrewio/checkov-action@master
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Terraform security scan
+        uses: triat/terraform-security-scan@v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          directory: env/bootstrap/
-          #file: example/tfplan.json # optional: provide the path for resource to be scanned. This will override the directory if both are provided.
-          #check: CKV_AWS_1 # optional: run only a specific check_id. can be comma separated list
-          #skip_check: CKV_AWS_2 # optional: skip a specific check_id. can be comma separated list
-          quiet: true # optional: display only failed checks
-          soft_fail: true # optional: do not return an error code if there are failed checks
-          framework: terraform # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
-          output_format: sarif # optional: the output format, one of: cli, json, junitxml, github_failed_only, or sarif. Default: sarif
-          download_external_modules: true # optional: download external terraform modules from public git repositories and terraform registry
-          log_level: DEBUG # optional: set log level. Default WARNING
-          config_file: .github/workflows/github-actions.yml 
-          #baseline: cloudformation/.checkov.baseline # optional: Path to a generated baseline file. Will only report results not in the baseline.
-          #container_user: 1000 # optional: Define what UID and / or what GID to run the container under to prevent permission issues
+          working_directory: env/bootstrap
+  infracost:
+    name: Infracost
+    runs-on: ubuntu-lates
+    env:
+      TF_ROOT: env/bootstrap
+      steps:
+        - name: Setup Infracost
+          uses: infracost/actions/setup@v2d
+          with:
+            api-key: ${{ secrets.INFRACOST_API_KEY }
+        - name: Checkout base branch
+          uses: actions/checkout@v2
+          with:
+            ref: '${{ github.event.pull_request.base.ref }}'
+        # Generate Infracost JSON file as the baseline.
+        - name: Generate Infracost cost estimate baseline
+          run: |
+            infracost breakdown --path=${TF_ROOT} \
+                                --format=json \
+                                --out-file=/tmp/infracost-base.jso
+        # Checkout the current PR branch so we can create a diff.
+        - name: Checkout PR branch
+          uses: actions/checkout@v
+        # Generate an Infracost diff and save it to a JSON file.
+        - name: Generate Infracost diff
+          run: |
+            infracost diff --path=${TF_ROOT} \
+                          --format=json \
+                          --compare-to=/tmp/infracost-base.json \
+                          --out-file=/tmp/infracost.jso
+        # Posts a comment to the PR using the 'update' behavior.
+        # This creates a single comment and updates it. The "quietest" option.
+        # The other valid behaviors are:
+        #   delete-and-new - Delete previous comments and create a new one.
+        #   hide-and-new - Minimize previous comments and create a new one.
+        #   new - Create a new cost estimate comment on every push.
+        # See https://www.infracost.io/docs/features/cli_commands/#comment-on-pull-requests for other options.
+        - name: Post Infracost comment
+          run: |
+              infracost comment github --path=/tmp/infracost.json \
+                                      --repo=$GITHUB_REPOSITORY \
+                                      --github-token=${{github.token}} \
+                                      --pull-request=${{github.event.pull_request.number}} \
+                                      --behavior=update

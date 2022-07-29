@@ -414,3 +414,9 @@ variable "cluster_network_policy" {
   description = "Configuration options for the NetworkPolicy based on CALICO CNI implementation."
   default     = false
 }
+
+variable "config_connector_config" {
+  type        = bool
+  description = "he status of the ConfigConnector addon"
+  default     = false
+}

@@ -415,3 +415,8 @@ variable "cluster_network_policy" {
   default     = false
 }
 
+variable "config_connector_config" {
+  type        = bool
+  description = "he status of the ConfigConnector addon"
+  default     = false
+}

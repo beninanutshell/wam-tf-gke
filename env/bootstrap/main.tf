@@ -1,5 +1,5 @@
 module "gke-cluster" {
-  source = "../../modules/gke"
+  source = "git@github.com:beninanutshell/wam-tf-gcp-modules.git//gke?ref=1.0.0"
 
   gcp_project_id                      = var.gcp_project_id
   cluster_name                        = var.cluster_name
@@ -16,5 +16,6 @@ module "gke-cluster" {
   node_pool_additional_labels_i       = var.node_pool_additional_labels_i
   authenticator_security_group        = var.authenticator_security_group
   workload_pool                       = var.workload_pool
+  config_connector_config             = var.config_connector_config
 }
 

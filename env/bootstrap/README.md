@@ -65,7 +65,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_gke-cluster"></a> [gke-cluster](#module\_gke-cluster) | ../../modules/gke | n/a |
+| <a name="module_gke-cluster"></a> [gke-cluster](#module\_gke-cluster) | git@github.com:beninanutshell/wam-tf-gcp-modules.git//gke | 1.0.0 |
 
 ## Resources
 
@@ -81,6 +81,7 @@ No resources.
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name of the cluster, unique within the project and zone. | `string` | n/a | yes |
 | <a name="input_cluster_network_policy"></a> [cluster\_network\_policy](#input\_cluster\_network\_policy) | Configuration options for the NetworkPolicy based on CALICO CNI implementation. | `bool` | `false` | no |
 | <a name="input_cluster_secondary_range_name"></a> [cluster\_secondary\_range\_name](#input\_cluster\_secondary\_range\_name) | The name of the secondary range to be used as for the cluster CIDR block.<br>The secondary range will be used for pod IP addresses. This must be an<br>existing secondary range associated with the cluster subnetwork. | `string` | n/a | yes |
+| <a name="input_config_connector_config"></a> [config\_connector\_config](#input\_config\_connector\_config) | he status of the ConfigConnector addon | `bool` | `false` | no |
 | <a name="input_daily_maintenance_window_start_time"></a> [daily\_maintenance\_window\_start\_time](#input\_daily\_maintenance\_window\_start\_time) | The start time of the 4 hour window for daily maintenance operations RFC3339<br>format HH:MM, where HH : [00-23] and MM : [00-59] GMT. | `string` | n/a | yes |
 | <a name="input_enable_shielded_nodes"></a> [enable\_shielded\_nodes](#input\_enable\_shielded\_nodes) | (Optional) Enable Shielded Nodes features on all nodes in this cluster. Defaults to false. | `string` | `true` | no |
 | <a name="input_gcp_location"></a> [gcp\_location](#input\_gcp\_location) | The location (region or zone) in which the cluster master will be created,<br>as well as the default node location. If you specify a zone (such as<br>us-central1-a), the cluster will be a zonal cluster with a single cluster<br>master. If you specify a region (such as us-west1), the cluster will be a<br>regional cluster with multiple masters spread across zones in that region.<br>Node pools will also be created as regional or zonal, to match the cluster.<br>If a node pool is zonal it will have the specified number of nodes in that<br>zone. If a node pool is regional it will have the specified number of nodes<br>in each zone within that region. For more information see:<br>https://cloud.google.com/kubernetes-engine/docs/concepts/regional-clusters | `string` | n/a | yes |

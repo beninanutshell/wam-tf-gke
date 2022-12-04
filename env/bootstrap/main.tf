@@ -19,3 +19,7 @@ module "gke-cluster" {
   config_connector_config             = var.config_connector_config
 }
 
+
+
+
+

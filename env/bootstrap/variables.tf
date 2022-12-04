@@ -358,8 +358,8 @@ variable "labels" {
     state        = string
   })
   validation {
-    condition     = contains(["dev", "int", "e2e", "uat", "ppr", "prd"], var.labels.environment)
-    error_message = "Allowed values for labels.environment are \"dev\", \"int\", \"e2e\", \"uat\", \"ppr\" and \"prd\"."
+    condition     = contains(["development", "integration", "e2e", "staging", "preproduction", "production"], var.labels.environment)
+    error_message = "Allowed values for labels.environment are \"development\", \"integration\", \"e2e\", \"staging\", \"preproduction\" and \"production\"."
   }
   validation {
     condition     = contains(["live", "archived", "to_delete"], var.labels.state)

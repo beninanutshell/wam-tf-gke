@@ -1,7 +1,7 @@
 terraform {
   backend "gcs" {
-    bucket      = "wam-bkt-b-tfstate-63f8"
-    prefix      = "terraform/application/wam-tf-gke/state/env/bootstrap/"
+    bucket      = "it-lab-app-build-state-wam-it-c-iac-pipeline-0rqb"
+    prefix      = "terraform/app/labo-gke/wam-tf-gke/state/env/bootstrap/"
     credentials = "terraform-deploy.json"
   }
 }

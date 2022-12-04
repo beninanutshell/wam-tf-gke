@@ -18,3 +18,8 @@ module "gke-cluster" {
   workload_pool                       = var.workload_pool
   config_connector_config             = var.config_connector_config
 }
+
+
+
+
+

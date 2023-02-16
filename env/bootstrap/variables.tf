@@ -420,3 +420,10 @@ variable "config_connector_config" {
   description = "he status of the ConfigConnector addon"
   default     = false
 }
+
+
+variable "gateway_api_channel" {
+  type        = string
+  description = "The gateway api channel of this cluster. Accepted values are `CHANNEL_STANDARD` and `CHANNEL_DISABLED`."
+  default     = "CHANNEL_STANDARD"
+}

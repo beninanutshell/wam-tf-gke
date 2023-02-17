@@ -1,5 +1,5 @@
 module "gke-cluster" {
-  source = "git@github.com:beninanutshell/wam-tf-gcp-modules.git//gke?ref=2.0.0"
+  source = "git@github.com:beninanutshell/wam-tf-gcp-modules.git//gke?ref=2.1.0"
 
   gcp_project_id                      = var.gcp_project_id
   cluster_name                        = var.cluster_name

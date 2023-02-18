@@ -426,3 +426,11 @@ variable "gateway_api_channel" {
   description = "The gateway api channel of this cluster. Accepted values are `CHANNEL_STANDARD` and `CHANNEL_DISABLED`."
   default     = "CHANNEL_STANDARD"
 }
+
+variable "tags" {
+  type = list(string)
+
+  description = <<EOF
+  (Optional) The Network tags for Node pool
+EOF
+}

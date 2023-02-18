@@ -426,3 +426,29 @@ variable "gateway_api_channel" {
   description = "The gateway api channel of this cluster. Accepted values are `CHANNEL_STANDARD` and `CHANNEL_DISABLED`."
   default     = "CHANNEL_STANDARD"
 }
+
+variable "env" {
+  type    = string
+  default = true
+
+  description = <<EOF
+The Env code name for the application, (p =prod, d = dev, s =staging, u =uat, e = e2e, i = int)
+EOF
+}
+
+variable "location" {
+  type    = string
+  default = true
+
+  description = <<EOF
+The location of the cluster  (euwe1 = europe-west1)
+EOF
+}
+
+variable "tags" {
+  type = list(string)
+
+  description = <<EOF
+  (Optional) The Network tags for Node pool
+EOF
+}

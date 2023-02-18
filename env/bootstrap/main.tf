@@ -1,5 +1,5 @@
 module "gke-cluster" {
-  source = "git@github.com:beninanutshell/wam-tf-gcp-modules.git//gke?ref=2.2.0"
+  source = "git@github.com:beninanutshell/wam-tf-gcp-modules.git//gke?ref=2.3.0"
 
   gcp_project_id                      = var.gcp_project_id
   cluster_name                        = var.cluster_name
@@ -18,12 +18,8 @@ module "gke-cluster" {
   workload_pool                       = var.workload_pool
   config_connector_config             = var.config_connector_config
   gateway_api_channel                 = var.gateway_api_channel
-  env                                 = "s"
-  location                            = "euwe1"
+  env                                 = var.env
+  location                            = var.location
+  tags                                = var.tags
 
 }
-
-
-
-
-

@@ -22,8 +22,3 @@ module "gke-cluster" {
   location                            = "euwe1"
 
 }
-
-
-
-
-

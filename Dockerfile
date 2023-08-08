@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.18.3
 RUN apk update && \
     apk add --no-cache wget openssh git bash gzip ca-certificates gawk gnupg && \
     apk add git-secret --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted && \
